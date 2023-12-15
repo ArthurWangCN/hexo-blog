@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="代码审查（Code review）是指对计算机源代码系统化地审查，常用软件同行评审的方式进行，其目的是在找出及修正在软件开发初期未发现的错误，提升软件质量及开发者的技术。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端小组代码审查相关">
+<meta property="og:url" content="https://awstudio.cn/2022/02/20/fe-code-review/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="代码审查（Code review）是指对计算机源代码系统化地审查，常用软件同行评审的方式进行，其目的是在找出及修正在软件开发初期未发现的错误，提升软件质量及开发者的技术。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-20T13:18:25.000Z">
+<meta property="article:modified_time" content="2023-03-20T13:20:49.553Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2022/02/20/fe-code-review/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>前端小组代码审查相关 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2022/02/20/fe-code-review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          前端小组代码审查相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-20 21:18:25" itemprop="dateCreated datePublished" datetime="2022-02-20T21:18:25+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-20 21:20:49" itemprop="dateModified" datetime="2023-03-20T21:20:49+08:00">2023-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">代码审查（Code review）是指对计算机源代码系统化地审查，常用软件同行评审的方式进行，其目的是在找出及修正在软件开发初期未发现的错误，提升软件质量及开发者的技术。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="审查原则"><a href="#审查原则" class="headerlink" title="审查原则"></a>审查原则</h2><ol>
+<li>保证代码可读性和健壮性</li>
+<li>团队知识共享</li>
+<li>尽早定位和解决bug</li>
+</ol>
+<h2 id="审查内容"><a href="#审查内容" class="headerlink" title="审查内容"></a>审查内容</h2><h3 id="一般项"><a href="#一般项" class="headerlink" title="一般项"></a>一般项</h3><ul>
+<li>是否实现预期的功能 ✅</li>
+<li>逻辑是否正确完备 ✅</li>
+<li>是否简单易懂（KISS） ✅</li>
+<li>是否有更好的实现方式 ✅</li>
+<li>是否符合规范（见审查清单） ✅</li>
+<li>是否存在多余的或重复的代码（DRY） ✅</li>
+<li>是否尽可能地模块化 ✅</li>
+<li>是否有可以删除的日志或调试代码 ✅</li>
+</ul>
+<h3 id="注释-x2F-文档"><a href="#注释-x2F-文档" class="headerlink" title="注释&#x2F;文档"></a>注释&#x2F;文档</h3><ul>
+<li>函数是否有注释（公用的函数强制注释） ✅</li>
+<li>是否对边界情况或特殊操作有说明（如 hack）（必须注释） ✅</li>
+<li>是否对未完成的内容做说明 TODO：XXX ✅</li>
+</ul>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><ul>
+<li>是否处理边界情况 ✅</li>
+<li>是否对输入做校验 ✅</li>
+<li>是否对异常做处理 ✅</li>
+</ul>
+<h2 id="审查方式"><a href="#审查方式" class="headerlink" title="审查方式"></a>审查方式</h2><h3 id="小片段式"><a href="#小片段式" class="headerlink" title="小片段式"></a>小片段式</h3><p>小片段式的代码审查，又称事前审查，是在代码合并到主分支之前就做的一种审查形式。如果发现了问题，在代码合并之前就会进行需改。</p>
+<h3 id="大规模式"><a href="#大规模式" class="headerlink" title="大规模式"></a>大规模式</h3><p>大规模式的代码审查，又称事后审查，大模块式的Code Review会议，进行大规模的代码检视，提出问题并记录，之后可以以重构的方式来处理在会议上发现的问题。</p>
+<h2 id="审查清单"><a href="#审查清单" class="headerlink" title="审查清单"></a>审查清单</h2><h3 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h3><p><strong>拼写正确</strong></p>
+<p>VSCode 可安装 Code Spell Checker</p>
+<p><strong>语义化</strong></p>
+<ul>
+<li>can：判断是否可执行某个动作</li>
+<li>has：判断是否含有某个值</li>
+<li>is：判断是否为某个值</li>
+<li>get：获取某个值</li>
+<li>set：设置某个值</li>
+</ul>
+<p>常量均需命名且大写，使用 _ 连接 const MAX_VALUE &#x3D; 9999</p>
+<p>变量使用小驼峰（Camel Case）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐：</span></span><br><span class="line"><span class="keyword">let</span> formInstance = <span class="string">&#x27;foo&#x27;</span></span><br><span class="line"><span class="comment">// 不推荐：</span></span><br><span class="line"><span class="keyword">let</span> form_instance = <span class="string">&#x27;foo&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数参数超过3个时，尽量使用 ES6 解构语法， 避免参数引入顺序问题</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">setContact</span>(<span class="params">&#123; name, phone, email &#125;</span>) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用参数默认值，使用参数默认值代替使用条件语句进行赋值</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params">bar = <span class="string">&quot;baz&quot;</span></span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params">bar</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> mybar = bar || <span class="string">&quot;baz&quot;</span>;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尽量使用纯函数，避免副作用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 纯函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkAge</span>(<span class="params">age</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> mini = <span class="number">18</span></span><br><span class="line">  <span class="keyword">return</span> age &gt;= mini</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 非纯函数</span></span><br><span class="line"><span class="keyword">let</span> mini= <span class="number">18</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkAe</span>(<span class="params">age</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> age &gt;= mini</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尽早 return：通过用 if&#x2F;return 替换 if&#x2F;else 来减少缩进（代码可读性）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// doStuff...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="性能相关"><a href="#性能相关" class="headerlink" title="性能相关"></a>性能相关</h3><ol>
+<li>避免全局变量</li>
+<li>清除无用的定时器、事件监听、event bus、闭包内变量</li>
+<li>优化消耗性能的操作，如递归、cloneDeep 等</li>
+<li>缓存复杂计算结果</li>
+<li>合理使用节流、防抖</li>
+<li>减少页面回流、重绘</li>
+<li>图片 CDN</li>
+</ol>
+<h2 id="Vue相关"><a href="#Vue相关" class="headerlink" title="Vue相关"></a>Vue相关</h2><h3 id="组件（文件）名称"><a href="#组件（文件）名称" class="headerlink" title="组件（文件）名称"></a>组件（文件）名称</h3><ol>
+<li>所有组件使用 SFC + TSX 形式</li>
+<li>SFC 中的标签顺序统一为 <code>&lt;template&gt;、&lt;script&gt;、&lt;style&gt;</code></li>
+<li>凡是跟组件名相关的（组件名、文件名及在模板中使用），都必须采用大驼峰 PascalCase 形式</li>
+<li>一般化描述放前，特殊化描述放后，例：</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">SearchButtonClear</span>.<span class="property">vue</span></span><br><span class="line"><span class="title class_">SearchButtonRun</span>.<span class="property">vue</span></span><br><span class="line"><span class="title class_">SearchInput</span>.<span class="property">vue</span></span><br><span class="line"><span class="title class_">SearchInputQuery</span>.<span class="property">vue</span></span><br><span class="line"><span class="title class_">SettingsCheckbox</span>.<span class="property">vue</span></span><br><span class="line"><span class="title class_">SettingsTerms</span>.<span class="property">vue</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="属性相关"><a href="#属性相关" class="headerlink" title="属性相关"></a>属性相关</h3><ol>
+<li>defineProps、defineEmits 要用类型声明的方式，而非运行时声明</li>
+<li>始终使用指令缩写，即 : @ #</li>
+</ol>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><ol>
+<li>避免非必要更新，合理使用 v-once、v-memo、computed（Vue: When a computed property can be the wrong tool）<br>例如 props 使用 isActive 而不是 activeId，导致每次 id 变化使所有子组件都更新</li>
+<li>代码复用，stateful logic 使用自定义 hooks，以 use 开头</li>
+<li>setup await？hook 放前</li>
+</ol>
+<h2 id="开发流程相关"><a href="#开发流程相关" class="headerlink" title="开发流程相关"></a>开发流程相关</h2><h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><p>👉 master</p>
+<ul>
+<li>主分支，稳定版本，用于部署生产环境</li>
+<li>不允许直接 push 代码，只能 Gitlab 上提交 merge request，且只允许 hotfix、release 分支代码合入</li>
+<li>每次发版成功后打 tag，加上日期</li>
+<li>常驻分支</li>
+</ul>
+<p>👉 release</p>
+<ul>
+<li>预发布分支</li>
+<li>验证过程中，bug 在 dev 分支自测，合入 test 分支提交给测试人员测试，测试通过后合入 release 分支验证</li>
+<li>验证通过后，合入 master 分支，master 分支发布版本</li>
+<li>常驻分支</li>
+</ul>
+<p>👉 test</p>
+<ul>
+<li>提测分支</li>
+<li>常驻分支</li>
+</ul>
+<p>👉 dev</p>
+<ul>
+<li>开发分支，包括新特性和 bug 修复，始终保持最新代码</li>
+<li>常驻分支</li>
+</ul>
+<p>👉 feature</p>
+<ul>
+<li>新功能，以 master 为基础创建</li>
+<li>命名以 feat&#x2F; 开头</li>
+<li>❗️需 push 到远程</li>
+<li>临时分支，合并后删除</li>
+</ul>
+<p>fix</p>
+<ul>
+<li>修复非生产 bug</li>
+<li>命名以 fix&#x2F; 开头</li>
+<li>修复完成后合入 dev 验证</li>
+<li>临时分支，合并后删除</li>
+</ul>
+<p>👉 hotfix</p>
+<ul>
+<li>紧急 bug 修复分支，修复生产 bug</li>
+<li>命名以 hotfix&#x2F; 开头</li>
+<li>修复完成后合入 master 验证</li>
+<li>临时分支，合并后删除</li>
+</ul>
+<h3 id="Commit-提交规范"><a href="#Commit-提交规范" class="headerlink" title="Commit 提交规范"></a>Commit 提交规范</h3><ol>
+<li>提交格式（考虑 commitizen）<br><code>&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</code></li>
+</ol>
+<p>type</p>
+<ul>
+<li>feat: 新功能&#x2F;特性</li>
+<li>fix: 修复 bug</li>
+<li>perf: 修改代码，以提高性能</li>
+<li>refactor: 代码重构</li>
+<li>docs: 文档修改</li>
+<li>style: 代码格式修改, 注意不是 css 修改（例如分号修改）</li>
+<li>test: 测试用例新增、修改</li>
+<li>build: 影响项目构建或依赖项修改</li>
+<li>revert: 恢复上一次提交</li>
+<li>ci: 持续集成相关文件修改</li>
+<li>chore: 其他修改（不在上述类型中的修改）</li>
+<li>release: 发布新版本</li>
+</ul>
+<p>scope<br>commit 影响的功能或文件范围，比如: route、component、utils、build…</p>
+<p>subject<br>commit message 的概述</p>
+<ol start="2">
+<li>husky pre-commit</li>
+</ol>
+<h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><ul>
+<li>开发环境 Develop<br>用于开发人员开发新特性，修复缺陷，自测使用</li>
+<li>测试环境 Test<br>用于测试人员测试，提出缺陷</li>
+<li>预发布环境 Release<br>用于上线前的真实环境验证</li>
+<li>生产环境 Production<br>用于发布稳定版本，打标签</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/20/cookie18/" rel="next" title="cookie 18问">
+      cookie 18问 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A1%E6%9F%A5%E5%8E%9F%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">审查原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A1%E6%9F%A5%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">审查内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E9%A1%B9"><span class="nav-number">2.1.</span> <span class="nav-text">一般项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A-x2F-%E6%96%87%E6%A1%A3"><span class="nav-number">2.2.</span> <span class="nav-text">注释&#x2F;文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8"><span class="nav-number">2.3.</span> <span class="nav-text">安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A1%E6%9F%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">审查方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%89%87%E6%AE%B5%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">小片段式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">大规模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A1%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="nav-number">4.</span> <span class="nav-text">审查清单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D"><span class="nav-number">4.1.</span> <span class="nav-text">命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E7%9B%B8%E5%85%B3"><span class="nav-number">4.3.</span> <span class="nav-text">性能相关</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue%E7%9B%B8%E5%85%B3"><span class="nav-number">5.</span> <span class="nav-text">Vue相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%EF%BC%88%E6%96%87%E4%BB%B6%EF%BC%89%E5%90%8D%E7%A7%B0"><span class="nav-number">5.1.</span> <span class="nav-text">组件（文件）名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E7%9B%B8%E5%85%B3"><span class="nav-number">5.2.</span> <span class="nav-text">属性相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">5.3.</span> <span class="nav-text">性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%E7%9B%B8%E5%85%B3"><span class="nav-number">6.</span> <span class="nav-text">开发流程相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%94%AF"><span class="nav-number">6.1.</span> <span class="nav-text">分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Commit-%E6%8F%90%E4%BA%A4%E8%A7%84%E8%8C%83"><span class="nav-number">6.2.</span> <span class="nav-text">Commit 提交规范</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">环境说明</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

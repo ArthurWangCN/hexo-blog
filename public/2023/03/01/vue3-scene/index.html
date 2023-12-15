@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="十个场景结合尤大大推荐的 setup，助你从 Vue2 丝滑过渡到 Vue3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十个场景助你从 vue2 过渡到 vue3">
+<meta property="og:url" content="https://awstudio.cn/2023/03/01/vue3-scene/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="十个场景结合尤大大推荐的 setup，助你从 Vue2 丝滑过渡到 Vue3">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-01T13:23:27.000Z">
+<meta property="article:modified_time" content="2023-03-20T13:29:43.320Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="Vue.js">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2023/03/01/vue3-scene/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>十个场景助你从 vue2 过渡到 vue3 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2023/03/01/vue3-scene/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          十个场景助你从 vue2 过渡到 vue3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-01 21:23:27" itemprop="dateCreated datePublished" datetime="2023-03-01T21:23:27+08:00">2023-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-20 21:29:43" itemprop="dateModified" datetime="2023-03-20T21:29:43+08:00">2023-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">十个场景结合尤大大推荐的 setup，助你从 Vue2 丝滑过渡到 Vue3</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>相信有很多这样的兄弟，学了 Vue3 的各种 API 和新特性，但公司项目依然使用的是 Vue2 ，也不知道自己的水平能否上手 Vue3 项目。其实你学的是零碎的知识点，缺少真实的使用场景。</p>
+<p>今天就把实战过程中遇到的十个场景分享给大家，结合尤大大推荐的 <code>&lt;script setup&gt;</code>，希望你能从 Vue2 丝滑过渡到 Vue3！</p>
+<h2 id="「场景一：父子组件数据传递」"><a href="#「场景一：父子组件数据传递」" class="headerlink" title="「场景一：父子组件数据传递」"></a>「场景一：父子组件数据传递」</h2><h3 id="父组件数据传递到子组件"><a href="#父组件数据传递到子组件" class="headerlink" title="父组件数据传递到子组件"></a>父组件数据传递到子组件</h3><p>Vue3 中父组件同样是通过属性传递数据，但子组件接受数据的方式和 Vue2 不同。在 <code>&lt;script setup&gt;</code> 中，props 需要使用 defineProps() 这个宏函数来进行声明，它的参数和 Vue2 props 选项的值是一样的。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span> <span class="attr">some-prop</span>=<span class="string">&quot;parent message&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> props = <span class="title function_">defineProps</span>(&#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="attr">someProp</span>: &#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="attr">type</span>: <span class="title class_">String</span>,</span></span><br><span class="line"><span class="language-javascript">    <span class="attr">required</span>: <span class="literal">true</span></span></span><br><span class="line"><span class="language-javascript">  &#125;</span></span><br><span class="line"><span class="language-javascript">&#125;)</span></span><br><span class="line"><span class="language-javascript"><span class="variable language_">console</span>.<span class="title function_">log</span>(props.<span class="property">someProp</span>) <span class="comment">// parent message</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 使用 someProp 或 props.someProp --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123; someProp &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123; props.someProp &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：defineProps 、defineEmits 、 defineExpose 和 withDefaults 这四个宏函数只能在 <code>&lt;script setup&gt;</code> 中使用。他们不需要导入，会随着 <code>&lt;script setup&gt;</code> 的处理过程中一起被编译。</p>
+<h3 id="子组件数据传递到父组件"><a href="#子组件数据传递到父组件" class="headerlink" title="子组件数据传递到父组件"></a>子组件数据传递到父组件</h3><p>Vue2 中子组件数据传递到父组件，通常是使用 $emit 触发一个自定义事件来进行传递。但 $emit 无法在 <code>&lt;script setup&gt;</code> 中使用，这时候我们需要使用 defineEmits()：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> emit = <span class="title function_">defineEmits</span>([<span class="string">&#x27;someEvent&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">function</span> <span class="title function_">onClick</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="title function_">emit</span>(<span class="string">&#x27;someEvent&#x27;</span>, <span class="string">&#x27;child message&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript">&#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;onClick&quot;</span>&gt;</span>点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">function</span> <span class="title function_">someEvent</span>(<span class="params">value</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="variable language_">console</span>.<span class="title function_">log</span>(value) <span class="comment">// child message</span></span></span><br><span class="line"><span class="language-javascript">&#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span> @<span class="attr">some-event</span>=<span class="string">&quot;someEvent&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="父组件使用子组件数据"><a href="#父组件使用子组件数据" class="headerlink" title="父组件使用子组件数据"></a>父组件使用子组件数据</h3><p>在 <code>&lt;script setup&gt;</code> 中，组件的属性和方法默认都是私有的。父组件无法访问到子组件中的任何东西，除非子组件通过 defineExpose 显式的暴露出去：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> msg = <span class="title function_">ref</span>(<span class="string">&#x27;hello vue3!&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">function</span> <span class="title function_">change</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">  msg.<span class="property">value</span> = <span class="string">&#x27;hi vue3!&#x27;</span></span></span><br><span class="line"><span class="language-javascript">  <span class="variable language_">console</span>.<span class="title function_">log</span>(msg.<span class="property">value</span>)</span></span><br><span class="line"><span class="language-javascript">&#125;</span></span><br><span class="line"><span class="language-javascript"><span class="comment">// 属性或方法必须暴露出去，父组件才能使用</span></span></span><br><span class="line"><span class="language-javascript"><span class="title function_">defineExpose</span>(&#123; msg, change &#125;)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; ref, onMounted &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> child = <span class="title function_">ref</span>(<span class="literal">null</span>)</span></span><br><span class="line"><span class="language-javascript"><span class="title function_">onMounted</span>(<span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="variable language_">console</span>.<span class="title function_">log</span>(child.<span class="property">value</span>.<span class="property">msg</span>) <span class="comment">// hello vue3!</span></span></span><br><span class="line"><span class="language-javascript">  child.<span class="property">value</span>.<span class="title function_">change</span>() <span class="comment">// hi vue3!</span></span></span><br><span class="line"><span class="language-javascript">&#125;)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span> <span class="attr">ref</span>=<span class="string">&quot;child&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">ChildView</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="「场景二：组件之间双向绑定」"><a href="#「场景二：组件之间双向绑定」" class="headerlink" title="「场景二：组件之间双向绑定」"></a>「场景二：组件之间双向绑定」</h2><p>家都知道 Vue2 中组件的双向绑定采用的是 v-model 或 .snyc 修饰符，两种写法多少显得有点重复，于是在 Vue3 中合成了一种。Vue3 统一使用 v-model 进行处理，并且可以和多个数据进行绑定，如 v-model:foo、v-model:bar。</p>
+<ul>
+<li>v-model 等价于 :model-value&#x3D;”someValue” 和 @update:model-value&#x3D;”someValue &#x3D; $event”</li>
+<li>v-model:foo 等价于 :foo&#x3D;”someValue” 和 @update:foo&#x3D;”someValue &#x3D; $event”</li>
+</ul>
+<p>下面就是一个父子组件之间双向绑定的例子：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> msg = <span class="title function_">ref</span>(<span class="string">&#x27;hello vue3!&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span> <span class="attr">v-model</span>=<span class="string">&quot;msg&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="title function_">defineProps</span>([<span class="string">&#x27;modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> emit = <span class="title function_">defineEmits</span>([<span class="string">&#x27;update:modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> @<span class="attr">click</span>=<span class="string">&quot;emit(&#x27;update:modelValue&#x27;, &#x27;hi vue3！&#x27;)&quot;</span>&gt;</span>&#123;&#123; modelValue &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>子组件可以结合 input 使用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="title function_">defineProps</span>([<span class="string">&#x27;modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> emit = <span class="title function_">defineEmits</span>([<span class="string">&#x27;update:modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">:value</span>=<span class="string">&quot;modelValue&quot;</span> @<span class="attr">input</span>=<span class="string">&quot;emit(&#x27;update:modelValue&#x27;, $event.target.value)&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你觉得上面的模板比较繁琐，也可以结合 computed 一起使用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; computed &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> props = <span class="title function_">defineProps</span>([<span class="string">&#x27;modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> emit = <span class="title function_">defineEmits</span>([<span class="string">&#x27;update:modelValue&#x27;</span>])</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> newValue = <span class="title function_">computed</span>(&#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="title function_">get</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">return</span> props.<span class="property">modelValue</span></span></span><br><span class="line"><span class="language-javascript">  &#125;,</span></span><br><span class="line"><span class="language-javascript">  <span class="title function_">set</span>(<span class="params">value</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">emit</span>(<span class="string">&#x27;update:modelValue&#x27;</span>, value)</span></span><br><span class="line"><span class="language-javascript">  &#125;</span></span><br><span class="line"><span class="language-javascript">&#125;)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">v-model</span>=<span class="string">&quot;newValue&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="「场景三：路由跳转，获取路由参数」"><a href="#「场景三：路由跳转，获取路由参数」" class="headerlink" title="「场景三：路由跳转，获取路由参数」"></a>「场景三：路由跳转，获取路由参数」</h2><p>Vue2 中我们通常是使用 this.$router 或 this.$route 来进行路由的跳转和参数获取，但在 <code>&lt;script-setup&gt;</code>中，是这些方法无法使用的。我们可以使用 vue-router 提供的 useRouter 方法，来进行路由跳转：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; useRouter &#125; <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> router = <span class="title function_">useRouter</span>()</span></span><br><span class="line"><span class="language-javascript"><span class="keyword">function</span> <span class="title function_">onClick</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">  router.<span class="title function_">push</span>(&#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="attr">path</span>: <span class="string">&#x27;/about&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">    <span class="attr">query</span>: &#123;</span></span><br><span class="line"><span class="language-javascript">      <span class="attr">msg</span>: <span class="string">&#x27;hello vue3!&#x27;</span></span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">  &#125;)</span></span><br><span class="line"><span class="language-javascript">&#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当我们要获取路由参数时，可以使用 vue-router 提供的 useRoute方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; useRoute &#125; <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> route = <span class="title function_">useRoute</span>()</span></span><br><span class="line"><span class="language-javascript"><span class="variable language_">console</span>.<span class="title function_">log</span>(route.<span class="property">query</span>.<span class="property">msg</span>) <span class="comment">// hello vue3!</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="「场景四：获取上下文对象」"><a href="#「场景四：获取上下文对象」" class="headerlink" title="「场景四：获取上下文对象」"></a>「场景四：获取上下文对象」</h2><p>Vue3 的 setup 中无法使用 this 这个上下文对象。可能刚接触 Vue3 的兄弟会有点懵，我想使用 this 上的属性和方法应该怎么办呢。虽然不推荐这样使用，但依然可以通过 getCurrentInstance 方法获取上下文对象：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; getCurrentInstance &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 以下两种方法都可以获取到上下文对象</span></span><br><span class="line"><span class="keyword">const</span> &#123; ctx &#125; = <span class="title function_">getCurrentInstance</span>()</span><br><span class="line"><span class="keyword">const</span> &#123; proxy &#125;  = <span class="title function_">getCurrentInstance</span>()</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就可以使用 $parent 、$refs 等，干自己想干的事情了。</p>
+<p>注意：ctx 只能在开发环境使用，生成环境为 undefined 。 推荐使用 proxy ，在开发环境和生产环境都可以使用。</p>
+<h2 id="「场景五：插槽的使用」"><a href="#「场景五：插槽的使用」" class="headerlink" title="「场景五：插槽的使用」"></a>「场景五：插槽的使用」</h2><p>在 Vue2 的中一般是通过 slot 属性指定模板的位置，通过 slot-scope 获取作用域插槽的数据，如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>parent<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">template</span> <span class="attr">slot</span>=<span class="string">&quot;content&quot;</span> <span class="attr">slot-scope</span>=<span class="string">&quot;&#123; msg &#125;&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123; msg &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">ChildView</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>child<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">&quot;content&quot;</span> <span class="attr">msg</span>=<span class="string">&quot;hello vue3!&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 Vue3 中则是通过 v-slot 这个指令来指定模板的位置，同时获取作用域插槽的数据，如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> <span class="title class_">ChildView</span> <span class="keyword">from</span> <span class="string">&#x27;./ChildView.vue&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>parent<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ChildView</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">template</span> <span class="attr">v-slot:content</span>=<span class="string">&quot;&#123; msg &#125;&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123; msg &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">ChildView</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- ChildView 也可以简写为： --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ChildView</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">template</span> #<span class="attr">content</span>=<span class="string">&quot;&#123; msg &#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123; msg &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ChildView</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>child<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">&quot;content&quot;</span> <span class="attr">msg</span>=<span class="string">&quot;hello vue3!&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：v-slot 在 Vue2 中也可以使用，但必须是 Vue2.6+ 的版本。</p>
+<h2 id="「场景六：缓存路由组件」"><a href="#「场景六：缓存路由组件」" class="headerlink" title="「场景六：缓存路由组件」"></a>「场景六：缓存路由组件」</h2><p>缓存一般的动态组件，Vue3 和 Vue2 的用法是一样的，都是使用 KeepAlive 包裹 Component。但缓存路由组件，Vue3 需要结合插槽一起使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Vue2 中缓存路由组件</span></span><br><span class="line">&lt;<span class="title class_">KeepAlive</span>&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">RouterView</span> /&gt;</span></span></span><br><span class="line">&lt;/<span class="title class_">KeepAlive</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Vue3 中缓存路由组件</span></span><br><span class="line">&lt;<span class="title class_">RouterView</span> v-slot=<span class="string">&quot;&#123; Component &#125;&quot;</span>&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">KeepAlive</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">Component</span> <span class="attr">:is</span>=<span class="string">&quot;Component&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">Component</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">KeepAlive</span>&gt;</span></span></span><br><span class="line">&lt;/<span class="title class_">RouterView</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>一个持续存在的组件可以通过 onActivated() 和 onDeactivated() 两个生命周期钩子注入相应的逻辑:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; onActivated, onDeactivated &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">onActivated</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 调用时机为首次挂载</span></span><br><span class="line">  <span class="comment">// 以及每次从缓存中被重新插入时</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="title function_">onDeactivated</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 调用时机为从 DOM 上移除、进入缓存</span></span><br><span class="line">  <span class="comment">// 以及组件卸载时</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="「场景七：逻辑复用」"><a href="#「场景七：逻辑复用」" class="headerlink" title="「场景七：逻辑复用」"></a>「场景七：逻辑复用」</h2><p>Vue2 中逻辑复用主要是采用 mixin，但 mixin 会使数据来源不明，同时会引起命名冲突。所以 Vue3 更推荐的是全新的 Composition Api。</p>
+<p>下面是鼠标跟踪的例子，我们可以把逻辑提取出来：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mouse.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; ref, onMounted, onUnmounted &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 按照惯例，组合式函数名以 use 开头</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">useMouse</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="comment">// 组合式函数管理的数据</span></span><br><span class="line">  <span class="keyword">const</span> x = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">const</span> y = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">update</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    x.<span class="property">value</span> = event.<span class="property">pageX</span></span><br><span class="line">    y.<span class="property">value</span> = event.<span class="property">pageY</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 组合式函数可以挂靠在所属组件的生命周期上，来启动和卸载副作用</span></span><br><span class="line">  <span class="title function_">onMounted</span>(<span class="function">() =&gt;</span> <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, update))</span><br><span class="line">  <span class="title function_">onUnmounted</span>(<span class="function">() =&gt;</span> <span class="variable language_">window</span>.<span class="title function_">removeEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, update))</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 通过返回值暴露所管理的数据</span></span><br><span class="line">  <span class="keyword">return</span> &#123; x, y &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时候在组件中我们就可以直接使用 mouse.js 暴露的数据了。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; useMouse &#125; <span class="keyword">from</span> <span class="string">&#x27;./mouse.js&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> &#123; x, y &#125; = <span class="title function_">useMouse</span>()</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span>Mouse position is at: &#123;&#123; x &#125;&#125;, &#123;&#123; y &#125;&#125;<span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们还可以在一个组件中引入多个组合式函数，或者在一个组合式函数中引入其他的组合式函数，这个比较简单，我就不演示了。接下来，我们看看使用异步方法的组合式函数。</p>
+<p>在做异步数据请求时，我们通常需要处理三个不同的状态：加载中、加载成功和加载失败。获取这些状态的逻辑是通用的，我们可以把它提取出来：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// request.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">useRequest</span>(<span class="params">url</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> data = <span class="title function_">ref</span>(<span class="literal">null</span>)</span><br><span class="line">  <span class="keyword">const</span> error = <span class="title function_">ref</span>(<span class="literal">null</span>)</span><br><span class="line"></span><br><span class="line">  axios.<span class="title function_">get</span>(url)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">res</span>) =&gt;</span> (data.<span class="property">value</span> = res.<span class="property">data</span>))</span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> (error.<span class="property">value</span> = err))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123; data, error &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们在组件中只需要：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">setup</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">import</span> &#123; useRequest &#125; <span class="keyword">from</span> <span class="string">&#x27;./request.js&#x27;</span></span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">const</span> &#123; data, error &#125; = <span class="title function_">useRequest</span>(<span class="string">&#x27;http://...&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-if</span>=<span class="string">&quot;data&quot;</span>&gt;</span>Data is: &#123;&#123; data &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else-if</span>=<span class="string">&quot;error&quot;</span>&gt;</span>Error message is: &#123;&#123; error.message &#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>任何组件都可以使用上面这个逻辑，这就是逻辑复用。</p>
+<h2 id="「场景八：生命周期」"><a href="#「场景八：生命周期」" class="headerlink" title="「场景八：生命周期」"></a>「场景八：生命周期」</h2><p>Vue3 的生命周期和 Vue2 相比，有以下改动：</p>
+<ul>
+<li>Vue3 生命周期钩子都以 on 开头，并且需要在组件中手动导入。</li>
+<li>Vue3 取消了 beforeCreate 和 created 钩子。如果需要在组件创建前注入逻辑，直接在 <code>&lt;script setup&gt;</code> 中编写同步代码就可以了。如果这几个钩子同时存在，setup 的执行顺序要优先于 beforeCreate 和 created。</li>
+<li>Vue3 中组件卸载的钩子名称有变化，beforeDestroy 改为 onBeforeUnmount，destroyed 改为 onUnmounted。</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; onMounted &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">onMounted</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;onMounted&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="「场景九：全局-API」"><a href="#「场景九：全局-API」" class="headerlink" title="「场景九：全局 API」"></a>「场景九：全局 API」</h2><p>Vue2 中的全局属性或全局方法，是在构造函数 Vue 的原型对象上进行添加，如：Vue.prototype.$axios &#x3D; axios 。但在 Vue3 中，需要在 app 实例上添加：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.js</span></span><br><span class="line">app.<span class="property">config</span>.<span class="property">globalProperties</span>.<span class="property">$axios</span> = axios</span><br></pre></td></tr></table></figure>
+
+<p>在组件中使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; getCurrentInstance &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123; proxy &#125; = <span class="title function_">getCurrentInstance</span>()</span><br><span class="line">proxy.<span class="property">$axios</span>.<span class="title function_">get</span>(<span class="string">&#x27;http://...&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Vue3 中其他的全局 API，如 directive 、component 等，跟 Vue2 的用法都差不多，只不过一个是在 Vue 上调用，一个是在 app 实例上调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="comment">// 全局自定义指令</span></span><br><span class="line">app.<span class="title function_">directive</span>(<span class="string">&#x27;focus&#x27;</span>, &#123;</span><br><span class="line">  <span class="title function_">mounted</span>(<span class="params">el</span>) &#123;</span><br><span class="line">    el.<span class="title function_">focus</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 全局自定义组件</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">CustomComp</span> <span class="keyword">from</span> <span class="string">&#x27;./components/CustomComp.vue&#x27;</span></span><br><span class="line"></span><br><span class="line">app.<span class="title function_">component</span>(<span class="string">&#x27;CustomComp&#x27;</span>, <span class="title class_">CustomComp</span>)</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，Vue3 废弃了 filter 这个方法，因为通过函数或 computed 可以实现一样的功能。</p>
+<h2 id="「常见十：与-TypeScript-结合使用」"><a href="#「常见十：与-TypeScript-结合使用」" class="headerlink" title="「常见十：与 TypeScript 结合使用」"></a>「常见十：与 TypeScript 结合使用」</h2><p>与 TypeScript 结合使用，我们只需要在 <code>&lt;script setup&gt;</code> 中添加 <code>lang=&quot;ts&quot;</code> 就可以了。下面是一些和 TypeScript 结合使用的例子。</p>
+<h3 id="为-props-标注类型"><a href="#为-props-标注类型" class="headerlink" title="为 props 标注类型"></a>为 props 标注类型</h3><p><strong>运行时声明</strong></p>
+<p>当使用 <code>&lt;script setup&gt;</code> 时，defineProps() 宏函数支持从它的参数中推导类型：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=<span class="string">&quot;ts&quot;</span>&gt;</span><br><span class="line"><span class="keyword">const</span> props = <span class="title function_">defineProps</span>(&#123;</span><br><span class="line">  <span class="attr">foo</span>: &#123; <span class="attr">type</span>: <span class="title class_">String</span>, <span class="attr">required</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">  <span class="attr">bar</span>: <span class="title class_">Number</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">props.<span class="property">foo</span> <span class="comment">// string</span></span><br><span class="line">props.<span class="property">bar</span> <span class="comment">// number | undefined</span></span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这被称为 运行时声明 ，因为传递给 defineProps() 的参数会作为运行时的 props 选项使用。</p>
+<p><strong>基于类型的声明</strong></p>
+<p>我们还可以通过泛型参数来定义 props 的类型，这种方式更加常用：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=<span class="string">&quot;ts&quot;</span>&gt;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Props</span> &#123;</span><br><span class="line">  <span class="attr">foo</span>: <span class="built_in">string</span></span><br><span class="line">  bar?: <span class="built_in">number</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> props = defineProps&lt;<span class="title class_">Props</span>&gt;()</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这被称为 基于类型的声明 ，编译器会尽可能地尝试根据类型参数推导出等价的运行时选项。这种方式的不足之处在于，失去了定义 props 默认值的能力。为了解决这个问题，我们可以使用 withDefaults 宏函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=<span class="string">&quot;ts&quot;</span>&gt;</span><br><span class="line">interface <span class="title class_">Props</span> &#123;</span><br><span class="line">  msg?: string</span><br><span class="line">  labels?: string[]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> props = <span class="title function_">withDefaults</span>(defineProps&lt;<span class="title class_">Props</span>&gt;(), &#123;</span><br><span class="line">  <span class="attr">msg</span>: <span class="string">&#x27;hello vue3!&#x27;</span>,</span><br><span class="line">  <span class="attr">labels</span>: <span class="function">() =&gt;</span> [<span class="string">&#x27;one&#x27;</span>, <span class="string">&#x27;two&#x27;</span>]</span><br><span class="line">&#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="为-ref-标注类型"><a href="#为-ref-标注类型" class="headerlink" title="为 ref() 标注类型"></a>为 ref() 标注类型</h3><p><strong>默认推导类型</strong></p>
+<p>ref 会根据初始化时的值自动推导其类型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> year = <span class="title function_">ref</span>(<span class="number">2022</span>)</span><br><span class="line">year.<span class="property">value</span> = <span class="string">&#x27;2022&#x27;</span> <span class="comment">// TS Error: 不能将类型 string 分配给类型 number</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>通过接口指定类型</strong></p>
+<p>有时我们可能想为 ref 内的值指定一个更复杂的类型，可以使用 Ref 这个接口：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">Ref</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">year</span>: <span class="title class_">Ref</span>&lt;<span class="built_in">string</span> | <span class="built_in">number</span>&gt; = <span class="title function_">ref</span>(<span class="string">&#x27;2022&#x27;</span>)</span><br><span class="line">year.<span class="property">value</span> = <span class="number">2022</span> <span class="comment">// 成功！</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>通过泛型指定类型</strong></p>
+<p>我们也可以在调用 ref() 时传入一个泛型参数，来覆盖默认的推导行为：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> year = ref&lt;<span class="built_in">string</span> | <span class="built_in">number</span>&gt;(<span class="string">&#x27;2022&#x27;</span>)</span><br><span class="line">year.<span class="property">value</span> = <span class="number">2022</span> <span class="comment">// 成功！</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="为-reactive-标注类型"><a href="#为-reactive-标注类型" class="headerlink" title="为 reactive() 标注类型"></a>为 reactive() 标注类型</h3><p><strong>默认推导类型</strong></p>
+<p>reactive() 也会隐式地从它的参数中推导类型：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; reactive &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> book = <span class="title function_">reactive</span>(&#123; <span class="attr">title</span>: <span class="string">&#x27;Vue 3 指引&#x27;</span> &#125;)</span><br><span class="line">book.<span class="property">year</span> = <span class="number">2022</span> <span class="comment">// TS Error: 类型 &#123; title: string; &#125; 上不存在属性 year</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>通过接口指定类型</strong></p>
+<p>要显式地指定一个 reactive 变量的类型，我们可以使用接口：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; reactive &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Book</span> &#123;</span><br><span class="line">  <span class="attr">title</span>: <span class="built_in">string</span></span><br><span class="line">  year?: <span class="built_in">number</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">book</span>: <span class="title class_">Book</span> = <span class="title function_">reactive</span>(&#123; <span class="attr">title</span>: <span class="string">&#x27;Vue 3 指引&#x27;</span> &#125;)</span><br><span class="line">book.<span class="property">year</span> = <span class="number">2022</span> <span class="comment">// 成功！</span></span><br></pre></td></tr></table></figure>
+
+<p>其他 API 与 TypeScript 结合使用的方法和上面大同小异，这里我就不一一列举了。具体可以参考这篇文章：<a target="_blank" rel="noopener" href="https://juejin.cn/post/7129130323148800031">如何为 Vue3 组件标注 TS 类型，看这个就够了！</a>。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>以上就是我在 Vue3 项目中遇到最多的场景，如果你掌握了 Vue3 常用的 API 和今天这些场景，相信参与 Vue3 项目的开发是没有问题了。当然如果要用好 Vue3 ，可能还需要对 Pinia 、 Vite 等相关生态有一个深入的了解。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue-js/" rel="tag"># Vue.js</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/02/18/deep-copy/" rel="prev" title="deep-copy">
+      <i class="fa fa-chevron-left"></i> deep-copy
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/06/pinia101/" rel="next" title="Pinia 快速入门">
+      Pinia 快速入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%B8%80%EF%BC%9A%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E3%80%8D"><span class="nav-number">1.</span> <span class="nav-text">「场景一：父子组件数据传递」</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%88%B6%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E5%88%B0%E5%AD%90%E7%BB%84%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">父组件数据传递到子组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E5%88%B0%E7%88%B6%E7%BB%84%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">子组件数据传递到父组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%88%B6%E7%BB%84%E4%BB%B6%E4%BD%BF%E7%94%A8%E5%AD%90%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.</span> <span class="nav-text">父组件使用子组件数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%BA%8C%EF%BC%9A%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E5%8F%8C%E5%90%91%E7%BB%91%E5%AE%9A%E3%80%8D"><span class="nav-number">2.</span> <span class="nav-text">「场景二：组件之间双向绑定」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%B8%89%EF%BC%9A%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC%EF%BC%8C%E8%8E%B7%E5%8F%96%E8%B7%AF%E7%94%B1%E5%8F%82%E6%95%B0%E3%80%8D"><span class="nav-number">3.</span> <span class="nav-text">「场景三：路由跳转，获取路由参数」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E5%9B%9B%EF%BC%9A%E8%8E%B7%E5%8F%96%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AF%B9%E8%B1%A1%E3%80%8D"><span class="nav-number">4.</span> <span class="nav-text">「场景四：获取上下文对象」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%BA%94%EF%BC%9A%E6%8F%92%E6%A7%BD%E7%9A%84%E4%BD%BF%E7%94%A8%E3%80%8D"><span class="nav-number">5.</span> <span class="nav-text">「场景五：插槽的使用」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E5%85%AD%EF%BC%9A%E7%BC%93%E5%AD%98%E8%B7%AF%E7%94%B1%E7%BB%84%E4%BB%B6%E3%80%8D"><span class="nav-number">6.</span> <span class="nav-text">「场景六：缓存路由组件」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%B8%83%EF%BC%9A%E9%80%BB%E8%BE%91%E5%A4%8D%E7%94%A8%E3%80%8D"><span class="nav-number">7.</span> <span class="nav-text">「场景七：逻辑复用」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E5%85%AB%EF%BC%9A%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%8D"><span class="nav-number">8.</span> <span class="nav-text">「场景八：生命周期」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%9C%BA%E6%99%AF%E4%B9%9D%EF%BC%9A%E5%85%A8%E5%B1%80-API%E3%80%8D"><span class="nav-number">9.</span> <span class="nav-text">「场景九：全局 API」</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E5%B8%B8%E8%A7%81%E5%8D%81%EF%BC%9A%E4%B8%8E-TypeScript-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8%E3%80%8D"><span class="nav-number">10.</span> <span class="nav-text">「常见十：与 TypeScript 结合使用」</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA-props-%E6%A0%87%E6%B3%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.1.</span> <span class="nav-text">为 props 标注类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA-ref-%E6%A0%87%E6%B3%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.2.</span> <span class="nav-text">为 ref() 标注类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA-reactive-%E6%A0%87%E6%B3%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.3.</span> <span class="nav-text">为 reactive() 标注类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">11.</span> <span class="nav-text">最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

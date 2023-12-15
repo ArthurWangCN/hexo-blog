@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Pinia（发音为&#x2F;piːnjʌ&#x2F;，如英语中的“peenya”）是最接近 piña（西班牙语中的菠萝）的词。 Pinia本质上依然是一个全局状态管理的库，用于跨组件、页面进行状态共享（这点和Vuex、Redux、Mobx一样）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pinia 快速入门">
+<meta property="og:url" content="https://awstudio.cn/2023/03/06/pinia101/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="Pinia（发音为&#x2F;piːnjʌ&#x2F;，如英语中的“peenya”）是最接近 piña（西班牙语中的菠萝）的词。 Pinia本质上依然是一个全局状态管理的库，用于跨组件、页面进行状态共享（这点和Vuex、Redux、Mobx一样）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-06T14:34:53.000Z">
+<meta property="article:modified_time" content="2023-03-07T14:53:26.403Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="Vue.js">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2023/03/06/pinia101/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Pinia 快速入门 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2023/03/06/pinia101/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pinia 快速入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-06 22:34:53" itemprop="dateCreated datePublished" datetime="2023-03-06T22:34:53+08:00">2023-03-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-07 22:53:26" itemprop="dateModified" datetime="2023-03-07T22:53:26+08:00">2023-03-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">Pinia（发音为/piːnjʌ/，如英语中的“peenya”）是最接近 piña（西班牙语中的菠萝）的词。 Pinia本质上依然是一个全局状态管理的库，用于跨组件、页面进行状态共享（这点和Vuex、Redux、Mobx一样）。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="pinia"><a href="#pinia" class="headerlink" title="pinia"></a>pinia</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Pinia（发音为&#x2F;piːnjʌ&#x2F;，如英语中的“peenya”）是最接近 piña（西班牙语中的菠萝）的词。 Pinia本质上依然是一个全局状态管理的库，用于跨组件、页面进行状态共享（这点和Vuex、Redux、Mobx一样）。</p>
+<p><strong>什么是store？</strong></p>
+<p>一个 Store （如 Pinia）是一个实体，它持有未绑定到您的组件树的状态和业务逻辑。换句话说，它托管全局状态。它有点像一个始终存在并且每个人都可以读取和写入的组件。它有三个概念，state、getters 和 actions 并且可以安全地假设这些概念等同于组件中的“数据”、“计算”和“方法”。</p>
+<p><strong>我什么时候应该使用store？</strong></p>
+<p>存储应该包含可以在整个应用程序中访问的数据。这包括在许多地方使用的数据，例如导航栏中显示的用户信息，以及需要通过页面保留的数据，例如一个非常复杂的多步骤表格。</p>
+<p>另一方面，您应该避免在存储中包含可以托管在组件中的本地数据，例如页面本地元素的可见性。</p>
+<p>并非所有应用程序都需要访问全局状态，但如果您需要一个，Pania 将使您的生活更轻松。</p>
+<h2 id="与-Vuex-3-x-x2F-4-x-的比较"><a href="#与-Vuex-3-x-x2F-4-x-的比较" class="headerlink" title="与 Vuex 3.x&#x2F;4.x 的比较"></a>与 Vuex 3.x&#x2F;4.x 的比较</h2><blockquote>
+<p>Vuex 3.x 是 Vuex 的 Vue 2 而 Vuex 4.x 是 Vue 3</p>
+</blockquote>
+<p>Pinia API 与 Vuex ≤4 有很大不同，即：</p>
+<ul>
+<li>mutations 不再存在。他们经常被认为是 非常 冗长。他们最初带来了 devtools 集成，但这不再是问题。</li>
+<li>无需创建自定义复杂包装器来支持 TypeScript，所有内容都是类型化的，并且 API 的设计方式尽可能利用 TS 类型推断。</li>
+<li>不再需要注入、导入函数、调用函数、享受自动完成功能！</li>
+<li>无需动态添加 Store，默认情况下它们都是动态的，您甚至都不会注意到。请注意，您仍然可以随时手动使用 Store 进行注册，但因为它是自动的，您无需担心。</li>
+<li>不再有 modules 的嵌套结构。您仍然可以通过在另一个 Store 中导入和 使用 来隐式嵌套 Store，但 Pinia 通过设计提供平面结构，同时仍然支持 Store 之间的交叉组合方式。 您甚至可以拥有 Store 的循环依赖关系。</li>
+<li>没有 命名空间模块。鉴于 Store 的扁平架构，“命名空间” Store 是其定义方式所固有的，您可以说所有 Store 都是命名空间的。</li>
+</ul>
+<h2 id="开始使用"><a href="#开始使用" class="headerlink" title="开始使用"></a>开始使用</h2><p>用你最喜欢的包管理器安装 pinia：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn add pinia</span><br><span class="line"><span class="comment"># 或者使用 npm</span></span><br><span class="line">npm install pinia</span><br></pre></td></tr></table></figure>
+
+<p>如果您的应用使用 Vue 2，您还需要安装组合 API：@vue&#x2F;composition-api。 本文将基于 vue3 示范，vue2 具体用法参考 <a target="_blank" rel="noopener" href="https://pinia.web3doc.top/getting-started.html#%E5%AE%89%E8%A3%85">pinia官网</a>。</p>
+<p>创建一个 pinia（根存储）并将其传递给应用程序：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createPinia &#125; <span class="keyword">from</span> <span class="string">&#x27;pinia&#x27;</span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">createPinia</span>())</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="定义一个store"><a href="#定义一个store" class="headerlink" title="定义一个store"></a>定义一个store</h3><p>在深入了解核心概念之前，我们需要知道 Store 是使用 defineStore() 定义的，并且它需要一个唯一名称，作为第一个参数传递：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineStore &#125; <span class="keyword">from</span> <span class="string">&#x27;pinia&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// useStore 可以是 useUser、useCart 之类的任何东西</span></span><br><span class="line"><span class="comment">// 第一个参数是应用程序中 store 的唯一 id</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="comment">// other options...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这个 name，也称为 id，是必要的，Pinia 使用它来将 store 连接到 devtools。 将返回的函数命名为 use… 是跨可组合项的约定，以使其符合你的使用习惯。</p>
+<h3 id="使用store"><a href="#使用store" class="headerlink" title="使用store"></a>使用store</h3><p>我们正在 定义 一个 store，因为在 setup() 中调用 useStore() 之前不会创建 store：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useStore &#125; <span class="keyword">from</span> <span class="string">&#x27;@/stores/counter&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 您可以返回整个 store 实例以在模板中使用它</span></span><br><span class="line">      store,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>您可以根据需要定义任意数量的 store ，并且**您应该在不同的文件中定义每个 store **以充分利用 pinia（例如自动允许您的包进行代码拆分和 TypeScript 推理）。</p>
+<p>一旦 store 被实例化，你就可以直接在 store 上访问 state、getters 和 actions 中定义的任何属性。 我们将在接下来的页面中详细介绍这些内容，但自动补全会对您有所帮助。</p>
+<p>请注意，store 是一个用reactive 包裹的对象，这意味着不需要在getter 之后写.value，但是，就像setup 中的props 一样，我们不能对其进行解构：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineComponent</span>(&#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span><br><span class="line">    <span class="comment">// ❌ 这不起作用，因为它会破坏响应式</span></span><br><span class="line">    <span class="comment">// 这和从 props 解构是一样的</span></span><br><span class="line">    <span class="keyword">const</span> &#123; name, doubleCount &#125; = store</span><br><span class="line"></span><br><span class="line">    name <span class="comment">// &quot;eduardo&quot;</span></span><br><span class="line">    doubleCount <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 一直会是 &quot;eduardo&quot;</span></span><br><span class="line">      name,</span><br><span class="line">      <span class="comment">// 一直会是 2</span></span><br><span class="line">      doubleCount,</span><br><span class="line">      <span class="comment">// 这将是响应式的</span></span><br><span class="line">      <span class="attr">doubleValue</span>: <span class="title function_">computed</span>(<span class="function">() =&gt;</span> store.<span class="property">doubleCount</span>),</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>为了从 Store 中提取属性同时保持其响应式，您需要使用 <code>storeToRefs()</code>。 它将为任何响应式属性创建 refs。 当您仅使用 store 中的状态但不调用任何操作时，这很有用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; storeToRefs &#125; <span class="keyword">from</span> <span class="string">&#x27;pinia&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineComponent</span>(&#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span><br><span class="line">    <span class="comment">// `name` 和 `doubleCount` 是响应式引用</span></span><br><span class="line">    <span class="comment">// 这也会为插件添加的属性创建引用</span></span><br><span class="line">    <span class="comment">// 但跳过任何 action 或 非响应式（不是 ref/reactive）的属性</span></span><br><span class="line">    <span class="keyword">const</span> &#123; name, doubleCount &#125; = <span class="title function_">storeToRefs</span>(store)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      name,</span><br><span class="line">      doubleCount</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="state"><a href="#state" class="headerlink" title="state"></a>state</h3><p>大多数时候，state 是 store 的核心部分。 我们通常从定义应用程序的状态开始。 在 Pinia 中，状态被定义为返回初始状态的函数。 Pinia 在服务器端和客户端都可以工作。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineStore &#125; <span class="keyword">from</span> <span class="string">&#x27;pinia&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;storeId&#x27;</span>, &#123;</span><br><span class="line">  <span class="comment">// 推荐使用 完整类型推断的箭头函数</span></span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 所有这些属性都将自动推断其类型</span></span><br><span class="line">      <span class="attr">counter</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;Eduardo&#x27;</span>,</span><br><span class="line">      <span class="attr">isAdmin</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问state"><a href="#访问state" class="headerlink" title="访问state"></a>访问state</h4><p>默认情况下，您可以通过 store 实例访问状态来直接读取和写入状态：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span><br><span class="line">store.<span class="property">counter</span>++</span><br></pre></td></tr></table></figure>
+
+<h4 id="重置状态"><a href="#重置状态" class="headerlink" title="重置状态"></a>重置状态</h4><p>您可以通过调用 store 上的 <code>$reset()</code> 方法将状态 重置 到其初始值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span><br><span class="line">store.$reset()</span><br></pre></td></tr></table></figure>
+
+<h4 id="改变状态"><a href="#改变状态" class="headerlink" title="改变状态"></a>改变状态</h4><p>除了直接用 store.counter++ 修改 store，你还可以调用 $patch 方法。 它允许您使用部分“state”对象同时应用多个更改：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">store.$patch(&#123;</span><br><span class="line">  <span class="attr">counter</span>: store.<span class="property">counter</span> + <span class="number">1</span>,</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;Abalam&#x27;</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>但是，使用这种语法应用某些突变非常困难或代价高昂：任何集合修改（例如，从数组中推送、删除、拼接元素）都需要您创建一个新集合。 正因为如此，$patch 方法也接受一个函数来批量修改集合内部分对象的情况：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cartStore.$patch(<span class="function">(<span class="params">state</span>) =&gt;</span> &#123;</span><br><span class="line">  state.<span class="property">items</span>.<span class="title function_">push</span>(&#123; <span class="attr">name</span>: <span class="string">&#x27;shoes&#x27;</span>, <span class="attr">quantity</span>: <span class="number">1</span> &#125;)</span><br><span class="line">  state.<span class="property">hasChanged</span> = <span class="literal">true</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这里的主要区别是$patch() 允许您将批量更改的日志写入开发工具中的一个条目中。 注意两者，state 和 $patch() 的直接更改都出现在 devtools 中，并且可以进行 time travelled（在 Vue 3 中还没有）。</p>
+<h4 id="替换state"><a href="#替换state" class="headerlink" title="替换state"></a>替换state</h4><p>您可以通过将其 $state 属性设置为新对象来替换 Store 的整个状态：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">store.<span class="property">$state</span> = &#123; <span class="attr">counter</span>: <span class="number">666</span>, <span class="attr">name</span>: <span class="string">&#x27;Paimon&#x27;</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>您还可以通过更改 pinia 实例的 state 来替换应用程序的整个状态。 这在 SSR for hydration 期间使用。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pinia.<span class="property">state</span>.<span class="property">value</span> = &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="订阅状态"><a href="#订阅状态" class="headerlink" title="订阅状态"></a>订阅状态</h4><p>可以通过 store 的 $subscribe() 方法查看状态及其变化，类似于 Vuex 的 subscribe 方法。 与常规的 watch() 相比，使用 $subscribe() 的优点是 subscriptions 只会在 patches 之后触发一次（例如，当使用上面的函数版本时）。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cartStore.$subscribe(<span class="function">(<span class="params">mutation, state</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// import &#123; MutationType &#125; from &#x27;pinia&#x27;</span></span><br><span class="line">  mutation.<span class="property">type</span> <span class="comment">// &#x27;direct&#x27; | &#x27;patch object&#x27; | &#x27;patch function&#x27;</span></span><br><span class="line">  <span class="comment">// 与 cartStore.$id 相同</span></span><br><span class="line">  mutation.<span class="property">storeId</span> <span class="comment">// &#x27;cart&#x27;</span></span><br><span class="line">  <span class="comment">// 仅适用于 mutation.type === &#x27;patch object&#x27;</span></span><br><span class="line">  mutation.<span class="property">payload</span> <span class="comment">// 补丁对象传递给 to cartStore.$patch()</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 每当它发生变化时，将整个状态持久化到本地存储</span></span><br><span class="line">  <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;cart&#x27;</span>, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(state))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，state subscriptions 绑定到添加它们的组件（如果 store 位于组件的 setup() 中）。 意思是，当组件被卸载时，它们将被自动删除。 如果要在卸载组件后保留它们，请将 { detached: true } 作为第二个参数传递给 detach 当前组件的 state subscription：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> someStore = <span class="title function_">useSomeStore</span>()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此订阅将在组件卸载后保留</span></span><br><span class="line">    someStore.$subscribe(callback, &#123; <span class="attr">detached</span>: <span class="literal">true</span> &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>您可以在 pinia 实例上查看整个状态：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">watch</span>(</span><br><span class="line">  pinia.<span class="property">state</span>,</span><br><span class="line">  <span class="function">(<span class="params">state</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 每当它发生变化时，将整个状态持久化到本地存储</span></span><br><span class="line">    <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;piniaState&#x27;</span>, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(state))</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; <span class="attr">deep</span>: <span class="literal">true</span> &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Getters"><a href="#Getters" class="headerlink" title="Getters"></a>Getters</h3><p>Getter 完全等同于 Store 状态的 计算值。 它们可以用 defineStore() 中的 getters 属性定义。 他们接收“状态”作为第一个参数以鼓励箭头函数的使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">counter</span>: <span class="number">0</span>,</span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="attr">doubleCount</span>: <span class="function">(<span class="params">state</span>) =&gt;</span> state.<span class="property">counter</span> * <span class="number">2</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>大多数时候，getter 只会依赖状态，但是，他们可能需要使用其他 getter。 正因为如此，我们可以在定义常规函数时通过 this 访问到 整个 store 的实例， 但是需要定义返回类型（在 TypeScript 中）。 这是由于 TypeScript 中的一个已知限制，并且不会影响使用箭头函数定义的 getter，也不会影响不使用 this 的 getter：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">counter</span>: <span class="number">0</span>,</span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="comment">// 自动将返回类型推断为数字</span></span><br><span class="line">    <span class="title function_">doubleCount</span>(<span class="params">state</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> state.<span class="property">counter</span> * <span class="number">2</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 返回类型必须明确设置</span></span><br><span class="line">    <span class="title function_">doublePlusOne</span>(): number &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">counter</span> * <span class="number">2</span> + <span class="number">1</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>然后你可以直接在 store 实例上访问 getter。</p>
+<h4 id="访问其他-getter"><a href="#访问其他-getter" class="headerlink" title="访问其他 getter"></a>访问其他 getter</h4><p>与计算属性一样，您可以组合多个 getter。 通过 this 访问任何其他 getter。 即使您不使用 TypeScript，您也可以使用 JSDoc 提示您的 IDE 类型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">counter</span>: <span class="number">0</span>,</span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="comment">// 类型是自动推断的，因为我们没有使用 `this`</span></span><br><span class="line">    <span class="attr">doubleCount</span>: <span class="function">(<span class="params">state</span>) =&gt;</span> state.<span class="property">counter</span> * <span class="number">2</span>,</span><br><span class="line">    <span class="comment">// 这里需要我们自己添加类型（在 JS 中使用 JSDoc）。 我们还可以</span></span><br><span class="line">    <span class="comment">// 使用它来记录 getter</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回计数器值乘以二加一。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@returns</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_">doubleCountPlusOne</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="comment">// 自动完成 ✨</span></span><br><span class="line">      <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">doubleCount</span> + <span class="number">1</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="将参数传递给-getter"><a href="#将参数传递给-getter" class="headerlink" title="将参数传递给 getter"></a>将参数传递给 getter</h4><p>Getters 只是幕后的 computed 属性，因此无法向它们传递任何参数。 但是，您可以从 getter 返回一个函数以接受任何参数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="attr">getUserById</span>: <span class="function">(<span class="params">state</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="function">(<span class="params">userId</span>) =&gt;</span> state.<span class="property">users</span>.<span class="title function_">find</span>(<span class="function">(<span class="params">user</span>) =&gt;</span> user.<span class="property">id</span> === userId)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>并在组件中使用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">const</span> store = <span class="title function_">useStore</span>()</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">return</span> &#123; <span class="attr">getUserById</span>: store.<span class="property">getUserById</span> &#125;</span></span><br><span class="line"><span class="language-javascript">  &#125;,</span></span><br><span class="line"><span class="language-javascript">&#125;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>User 2: &#123;&#123; getUserById(2) &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>请注意，在执行此操作时，getter 不再缓存，它们只是您调用的函数。 但是，您可以在 getter 本身内部缓存一些结果，这并不常见，但应该证明性能更高：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="title function_">getActiveUserById</span>(<span class="params">state</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> activeUsers = state.<span class="property">users</span>.<span class="title function_">filter</span>(<span class="function">(<span class="params">user</span>) =&gt;</span> user.<span class="property">active</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="function">(<span class="params">userId</span>) =&gt;</span> activeUsers.<span class="title function_">find</span>(<span class="function">(<span class="params">user</span>) =&gt;</span> user.<span class="property">id</span> === userId)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问其他-Store-的getter"><a href="#访问其他-Store-的getter" class="headerlink" title="访问其他 Store 的getter"></a>访问其他 Store 的getter</h4><p>要使用其他存储 getter，您可以直接在 better 内部使用它：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useOtherStore &#125; <span class="keyword">from</span> <span class="string">&#x27;./other-store&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">getters</span>: &#123;</span><br><span class="line">    <span class="title function_">otherGetter</span>(<span class="params">state</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> otherStore = <span class="title function_">useOtherStore</span>()</span><br><span class="line">      <span class="keyword">return</span> state.<span class="property">localData</span> + otherStore.<span class="property">data</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h3><p>Actions 相当于组件中的 methods。 它们可以使用 defineStore() 中的 actions 属性定义，并且它们非常适合定义业务逻辑：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;main&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">counter</span>: <span class="number">0</span>,</span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">actions</span>: &#123;</span><br><span class="line">    <span class="title function_">increment</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">counter</span>++</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">randomizeCounter</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">counter</span> = <span class="title class_">Math</span>.<span class="title function_">round</span>(<span class="number">100</span> * <span class="title class_">Math</span>.<span class="title function_">random</span>())</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>与 getters 一样，操作可以通过 this 访问 whole store instance 并提供完整类型（和自动完成✨）支持。 与它们不同，actions 可以是异步的，您可以在其中await 任何 API 调用甚至其他操作！ 这是使用 Mande 的示例。 请注意，只要您获得“Promise”，您使用的库并不重要，您甚至可以使用浏览器的“fetch”函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; mande &#125; <span class="keyword">from</span> <span class="string">&#x27;mande&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> api = <span class="title function_">mande</span>(<span class="string">&#x27;/api/users&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useUsers = <span class="title function_">defineStore</span>(<span class="string">&#x27;users&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">userData</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;),</span><br><span class="line"></span><br><span class="line">  <span class="attr">actions</span>: &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">registerUser</span>(<span class="params">login, password</span>) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">userData</span> = <span class="keyword">await</span> api.<span class="title function_">post</span>(&#123; login, password &#125;)</span><br><span class="line">        <span class="title function_">showTooltip</span>(<span class="string">`Welcome back <span class="subst">$&#123;<span class="variable language_">this</span>.userData.name&#125;</span>!`</span>)</span><br><span class="line">      &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="title function_">showTooltip</span>(error)</span><br><span class="line">        <span class="comment">// 让表单组件显示错误</span></span><br><span class="line">        <span class="keyword">return</span> error</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>你也可以完全自由地设置你想要的任何参数并返回任何东西。 调用 Action 时，一切都会自动推断！</p>
+<p>Actions 像 methods 一样被调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineComponent</span>(&#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> main = <span class="title function_">useMainStore</span>()</span><br><span class="line">    <span class="comment">// Actions 像 methods 一样被调用：</span></span><br><span class="line">    main.<span class="title function_">randomizeCounter</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问其他-store-操作"><a href="#访问其他-store-操作" class="headerlink" title="访问其他 store 操作"></a>访问其他 store 操作</h4><p>要使用另一个 store ，您可以直接在操作内部使用它：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useAuthStore &#125; <span class="keyword">from</span> <span class="string">&#x27;./auth-store&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useSettingsStore = <span class="title function_">defineStore</span>(<span class="string">&#x27;settings&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">state</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;),</span><br><span class="line">  <span class="attr">actions</span>: &#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="title function_">fetchUserPreferences</span>(<span class="params">preferences</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> auth = <span class="title function_">useAuthStore</span>()</span><br><span class="line">      <span class="keyword">if</span> (auth.<span class="property">isAuthenticated</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">preferences</span> = <span class="keyword">await</span> <span class="title function_">fetchPreferences</span>()</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;User must be authenticated&#x27;</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="订阅-Actions"><a href="#订阅-Actions" class="headerlink" title="订阅 Actions"></a>订阅 Actions</h4><p>可以使用 store.$onAction() 订阅 action 及其结果。 传递给它的回调在 action 之前执行。 after 处理 Promise 并允许您在 action 完成后执行函数。 以类似的方式，onError 允许您在处理中抛出错误。 这些对于在运行时跟踪错误很有用，类似于 Vue 文档中的这个提示。</p>
+<p>这是一个在运行 action 之前和它们 resolve&#x2F;reject 之后记录的示例。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> unsubscribe = someStore.$onAction(</span><br><span class="line">  <span class="function">(<span class="params">&#123;</span></span></span><br><span class="line"><span class="params"><span class="function">    name, // action 的名字</span></span></span><br><span class="line"><span class="params"><span class="function">    store, // store 实例</span></span></span><br><span class="line"><span class="params"><span class="function">    args, // 调用这个 action 的参数</span></span></span><br><span class="line"><span class="params"><span class="function">    after, // 在这个 action 执行完毕之后，执行这个函数</span></span></span><br><span class="line"><span class="params"><span class="function">    onError, // 在这个 action 抛出异常的时候，执行这个函数</span></span></span><br><span class="line"><span class="params"><span class="function">  &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 记录开始的时间变量</span></span><br><span class="line">    <span class="keyword">const</span> startTime = <span class="title class_">Date</span>.<span class="title function_">now</span>()</span><br><span class="line">    <span class="comment">// 这将在 `store` 上的操作执行之前触发</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Start &quot;<span class="subst">$&#123;name&#125;</span>&quot; with params [<span class="subst">$&#123;args.join(<span class="string">&#x27;, &#x27;</span>)&#125;</span>].`</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果 action 成功并且完全运行后，after 将触发。</span></span><br><span class="line">    <span class="comment">// 它将等待任何返回的 promise</span></span><br><span class="line">    <span class="title function_">after</span>(<span class="function">(<span class="params">result</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">        <span class="string">`Finished &quot;<span class="subst">$&#123;name&#125;</span>&quot; after <span class="subst">$&#123;</span></span></span><br><span class="line"><span class="subst"><span class="string">          <span class="built_in">Date</span>.now() - startTime</span></span></span><br><span class="line"><span class="subst"><span class="string">        &#125;</span>ms.\nResult: <span class="subst">$&#123;result&#125;</span>.`</span></span><br><span class="line">      )</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果 action 抛出或返回 Promise.reject ，onError 将触发</span></span><br><span class="line">    <span class="title function_">onError</span>(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">warn</span>(</span><br><span class="line">        <span class="string">`Failed &quot;<span class="subst">$&#123;name&#125;</span>&quot; after <span class="subst">$&#123;<span class="built_in">Date</span>.now() - startTime&#125;</span>ms.\nError: <span class="subst">$&#123;error&#125;</span>.`</span></span><br><span class="line">      )</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 手动移除订阅</span></span><br><span class="line"><span class="title function_">unsubscribe</span>()</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，action subscriptions 绑定到添加它们的组件（如果 store 位于组件的 setup() 内）。 意思是，当组件被卸载时，它们将被自动删除。 如果要在卸载组件后保留它们，请将 true 作为第二个参数传递给当前组件的 detach action subscription：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="title function_">setup</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> someStore = <span class="title function_">useSomeStore</span>()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 此订阅将在组件卸载后保留</span></span><br><span class="line">    someStore.$onAction(callback, <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>Pinia 相较于 Vuex 来说，更简单的API，更少的写法，并且对于TypeScript 支持非常好，可以自动推断类型，可以随意调用，不用局限于 mutations，大大提高了开发效率，并且降低了学习成本。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue-js/" rel="tag"># Vue.js</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/01/vue3-scene/" rel="prev" title="十个场景助你从 vue2 过渡到 vue3">
+      <i class="fa fa-chevron-left"></i> 十个场景助你从 vue2 过渡到 vue3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/06/scss101/" rel="next" title="scss 快速入门">
+      scss 快速入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pinia"><span class="nav-number">1.</span> <span class="nav-text">pinia</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E-Vuex-3-x-x2F-4-x-%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.</span> <span class="nav-text">与 Vuex 3.x&#x2F;4.x 的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">开始使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.4.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAstore"><span class="nav-number">1.4.1.</span> <span class="nav-text">定义一个store</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8store"><span class="nav-number">1.4.2.</span> <span class="nav-text">使用store</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#state"><span class="nav-number">1.4.3.</span> <span class="nav-text">state</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AEstate"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">访问state</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%BD%AE%E7%8A%B6%E6%80%81"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">重置状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E7%8A%B6%E6%80%81"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">改变状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2state"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">替换state</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A2%E9%98%85%E7%8A%B6%E6%80%81"><span class="nav-number">1.4.3.5.</span> <span class="nav-text">订阅状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Getters"><span class="nav-number">1.4.4.</span> <span class="nav-text">Getters</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%85%B6%E4%BB%96-getter"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">访问其他 getter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E7%BB%99-getter"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">将参数传递给 getter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%85%B6%E4%BB%96-Store-%E7%9A%84getter"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">访问其他 Store 的getter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actions"><span class="nav-number">1.4.5.</span> <span class="nav-text">Actions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%85%B6%E4%BB%96-store-%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">访问其他 store 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A2%E9%98%85-Actions"><span class="nav-number">1.4.5.2.</span> <span class="nav-text">订阅 Actions</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">1.5.</span> <span class="nav-text">最后</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

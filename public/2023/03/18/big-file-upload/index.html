@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文从零搭建前端和服务端，实现一个大文件上传的 demo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大文件上传实现">
+<meta property="og:url" content="https://awstudio.cn/2023/03/18/big-file-upload/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="本文从零搭建前端和服务端，实现一个大文件上传的 demo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-18T14:23:15.000Z">
+<meta property="article:modified_time" content="2023-03-20T12:27:23.424Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2023/03/18/big-file-upload/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>大文件上传实现 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2023/03/18/big-file-upload/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大文件上传实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-18 22:23:15" itemprop="dateCreated datePublished" datetime="2023-03-18T22:23:15+08:00">2023-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-20 20:27:23" itemprop="dateModified" datetime="2023-03-20T20:27:23+08:00">2023-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">本文从零搭建前端和服务端，实现一个大文件上传的 demo</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文从零搭建前端和服务端，实现一个大文件上传的 demo</p>
+<p>前端：Vue@2 + Element-ui</p>
+<p>服务端：Nodejs@14 + multiparty</p>
+<h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><p>前端大文件上传网上的大部分文章已经给出了解决方案，核心是利用 <code>Blob.prototype.slice</code> 方法，和数组的 slice 方法相似，文件的 slice 方法可以返回原文件的某个切片。</p>
+<p>预先定义好单个切片大小，将文件切分为一个个切片，然后借助 http 的可并发性，同时上传多个切片。这样从原本传一个大文件，变成了并发传多个小的文件切片，可以大大减少上传时间。</p>
+<p>另外由于是并发，传输到服务端的顺序可能会发生变化，因此我们还需要给每个切片记录顺序。</p>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><p>服务端负责接受前端传输的切片，并在接收到所有切片后合并所有切片</p>
+<p>这里又引伸出两个问题</p>
+<ol>
+<li>何时合并切片，即切片什么时候传输完成</li>
+<li>如何合并切片</li>
+</ol>
+<p>第一个问题需要前端配合，前端在每个切片中都携带切片最大数量的信息，当服务端接受到这个数量的切片时自动合并。或者也可以额外发一个请求，主动通知服务端进行切片的合并。</p>
+<p>第二个问题，具体如何合并切片呢？这里可以使用 Nodejs 的 读写流（readStream&#x2F;writeStream），将所有切片的流传输到最终文件的流里。</p>
+<h2 id="前端部分"><a href="#前端部分" class="headerlink" title="前端部分"></a>前端部分</h2><p>前端使用 Vue 作为开发框架，对界面没有太大要求，原生也可以，考虑到美观使用 Element-ui 作为 UI 框架</p>
+<h3 id="上传控件"><a href="#上传控件" class="headerlink" title="上传控件"></a>上传控件</h3><p>首先创建选择文件的控件并监听 change 事件，另外就是上传按钮</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> @<span class="attr">change</span>=<span class="string">&quot;handleFileChange&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">el-button</span> @<span class="attr">click</span>=<span class="string">&quot;handleUpload&quot;</span>&gt;</span>upload<span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="language-javascript">  <span class="attr">data</span>: <span class="function">() =&gt;</span> (&#123;</span></span><br><span class="line"><span class="language-javascript">    <span class="attr">container</span>: &#123;</span></span><br><span class="line"><span class="language-javascript">      <span class="attr">file</span>: <span class="literal">null</span></span></span><br><span class="line"><span class="language-javascript">    &#125;</span></span><br><span class="line"><span class="language-javascript">  &#125;),</span></span><br><span class="line"><span class="language-javascript">  <span class="attr">methods</span>: &#123;</span></span><br><span class="line"><span class="language-javascript">     <span class="title function_">handleFileChange</span>(<span class="params">e</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">      <span class="keyword">const</span> [file] = e.<span class="property">target</span>.<span class="property">files</span>;</span></span><br><span class="line"><span class="language-javascript">      <span class="keyword">if</span> (!file) <span class="keyword">return</span>;</span></span><br><span class="line"><span class="language-javascript">      <span class="title class_">Object</span>.<span class="title function_">assign</span>(<span class="variable language_">this</span>.<span class="property">$data</span>, <span class="variable language_">this</span>.<span class="property">$options</span>.<span class="title function_">data</span>());</span></span><br><span class="line"><span class="language-javascript">      <span class="variable language_">this</span>.<span class="property">container</span>.<span class="property">file</span> = file;</span></span><br><span class="line"><span class="language-javascript">    &#125;,</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">async</span> <span class="title function_">handleUpload</span>(<span class="params"></span>) &#123;&#125;</span></span><br><span class="line"><span class="language-javascript">  &#125;</span></span><br><span class="line"><span class="language-javascript">&#125;;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="请求逻辑"><a href="#请求逻辑" class="headerlink" title="请求逻辑"></a>请求逻辑</h3><p>考虑到通用性，这里没有用第三方的请求库，而是用原生 XMLHttpRequest 做一层简单的封装来发请求</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">request</span>(<span class="params">&#123;</span></span><br><span class="line"><span class="params">      url,</span></span><br><span class="line"><span class="params">      method = <span class="string">&quot;post&quot;</span>,</span></span><br><span class="line"><span class="params">      data,</span></span><br><span class="line"><span class="params">      headers = &#123;&#125;,</span></span><br><span class="line"><span class="params">      requestList</span></span><br><span class="line"><span class="params">    &#125;</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line">        xhr.<span class="title function_">open</span>(method, url);</span><br><span class="line">        <span class="title class_">Object</span>.<span class="title function_">keys</span>(headers).<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span></span><br><span class="line">          xhr.<span class="title function_">setRequestHeader</span>(key, headers[key])</span><br><span class="line">        );</span><br><span class="line">        xhr.<span class="title function_">send</span>(data);</span><br><span class="line">        xhr.<span class="property">onload</span> = <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="title function_">resolve</span>(&#123;</span><br><span class="line">            <span class="attr">data</span>: e.<span class="property">target</span>.<span class="property">response</span></span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="上传切片"><a href="#上传切片" class="headerlink" title="上传切片"></a>上传切片</h3><p>接着实现比较重要的上传功能，上传需要做两件事</p>
+<ol>
+<li>对文件进行切片</li>
+<li>将切片传输给服务端</li>
+</ol>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; @change=&quot;handleFileChange&quot; /&gt;</span><br><span class="line">    &lt;el-button @click=&quot;handleUpload&quot;&gt;上传&lt;/el-button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="addition">+ // 切片大小</span></span><br><span class="line"><span class="addition">+ // the chunk size</span></span><br><span class="line"><span class="addition">+ const SIZE = 10 * 1024 * 1024; </span></span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  data: () =&gt; (&#123;</span><br><span class="line">    container: &#123;</span><br><span class="line">      file: null</span><br><span class="line">    &#125;，</span><br><span class="line"><span class="addition">+   data: []</span></span><br><span class="line">  &#125;),</span><br><span class="line">  methods: &#123;</span><br><span class="line">    request() &#123;&#125;,</span><br><span class="line">    handleFileChange() &#123;&#125;,</span><br><span class="line"><span class="addition">+    // 生成文件切片</span></span><br><span class="line"><span class="addition">+    createFileChunk(file, size = SIZE) &#123;</span></span><br><span class="line"><span class="addition">+     const fileChunkList = [];</span></span><br><span class="line"><span class="addition">+      let cur = 0;</span></span><br><span class="line"><span class="addition">+      while (cur &lt; file.size) &#123;</span></span><br><span class="line"><span class="addition">+        fileChunkList.push(&#123; file: file.slice(cur, cur + size) &#125;);</span></span><br><span class="line"><span class="addition">+        cur += size;</span></span><br><span class="line"><span class="addition">+      &#125;</span></span><br><span class="line"><span class="addition">+      return fileChunkList;</span></span><br><span class="line"><span class="addition">+    &#125;,</span></span><br><span class="line"><span class="addition">+   // 上传切片</span></span><br><span class="line"><span class="addition">+    async uploadChunks() &#123;</span></span><br><span class="line"><span class="addition">+      const requestList = this.data</span></span><br><span class="line"><span class="addition">+        .map((&#123; chunk，hash &#125;) =&gt; &#123;</span></span><br><span class="line"><span class="addition">+          const formData = new FormData();</span></span><br><span class="line"><span class="addition">+          formData.append(&quot;chunk&quot;, chunk);</span></span><br><span class="line"><span class="addition">+          formData.append(&quot;hash&quot;, hash);</span></span><br><span class="line"><span class="addition">+          formData.append(&quot;filename&quot;, this.container.file.name);</span></span><br><span class="line"><span class="addition">+          return &#123; formData &#125;;</span></span><br><span class="line"><span class="addition">+        &#125;)</span></span><br><span class="line"><span class="addition">+        .map((&#123; formData &#125;) =&gt;</span></span><br><span class="line"><span class="addition">+          this.request(&#123;</span></span><br><span class="line"><span class="addition">+            url: &quot;http://localhost:3000&quot;,</span></span><br><span class="line"><span class="addition">+            data: formData</span></span><br><span class="line"><span class="addition">+          &#125;)</span></span><br><span class="line"><span class="addition">+        );</span></span><br><span class="line"><span class="addition">+      // 并发请求</span></span><br><span class="line"><span class="addition">+      await Promise.all(requestList); </span></span><br><span class="line"><span class="addition">+    &#125;,</span></span><br><span class="line"><span class="addition">+    async handleUpload() &#123;</span></span><br><span class="line"><span class="addition">+      if (!this.container.file) return;</span></span><br><span class="line"><span class="addition">+      const fileChunkList = this.createFileChunk(this.container.file);</span></span><br><span class="line"><span class="addition">+      this.data = fileChunkList.map((&#123; file &#125;，index) =&gt; (&#123;</span></span><br><span class="line"><span class="addition">+        chunk: file,</span></span><br><span class="line"><span class="addition">+        // 文件名 + 数组下标</span></span><br><span class="line"><span class="addition">+        hash: this.container.file.name + &quot;-&quot; + index</span></span><br><span class="line"><span class="addition">+      &#125;));</span></span><br><span class="line"><span class="addition">+      await this.uploadChunks();</span></span><br><span class="line"><span class="addition">+    &#125;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当点击上传按钮时，调用 createFileChunk 将文件切片，切片数量通过文件大小控制，这里设置 10MB，也就是说一个 100 MB 的文件会被分成 10 个 10MB 的切片。</p>
+<p>createFileChunk 内使用 while 循环和 slice 方法将切片放入 fileChunkList 数组中返回。</p>
+<p>在生成文件切片时，需要给每个切片一个标识作为 hash，这里暂时使用文件名 + 下标，这样后端可以知道当前切片是第几个切片，用于之后的合并切片。</p>
+<p>随后调用 uploadChunks 上传所有的文件切片，将文件切片，切片 hash，以及文件名放入 formData 中，再调用上一步的 request 函数返回一个 proimise，最后调用 Promise.all 并发上传所有的切片。</p>
+<h3 id="发送合并请求"><a href="#发送合并请求" class="headerlink" title="发送合并请求"></a>发送合并请求</h3><p>使用整体思路中提到的第二种合并切片的方式，即前端主动通知服务端进行合并</p>
+<p>前端发送额外的合并请求，服务端接受到请求时合并切片</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; @change=&quot;handleFileChange&quot; /&gt;</span><br><span class="line">    &lt;el-button @click=&quot;handleUpload&quot;&gt;upload&lt;/el-button&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  data: () =&gt; (&#123;</span><br><span class="line">    container: &#123;</span><br><span class="line">      file: null</span><br><span class="line">    &#125;,</span><br><span class="line">    data: []</span><br><span class="line">  &#125;),</span><br><span class="line">  methods: &#123;</span><br><span class="line">    request() &#123;&#125;,</span><br><span class="line">    handleFileChange() &#123;&#125;,</span><br><span class="line">    createFileChunk() &#123;&#125;,</span><br><span class="line">    async uploadChunks() &#123;</span><br><span class="line">      const requestList = this.data</span><br><span class="line">        .map((&#123; chunk，hash &#125;) =&gt; &#123;</span><br><span class="line">          const formData = new FormData();</span><br><span class="line">          formData.append(&quot;chunk&quot;, chunk);</span><br><span class="line">          formData.append(&quot;hash&quot;, hash);</span><br><span class="line">          formData.append(&quot;filename&quot;, this.container.file.name);</span><br><span class="line">          return &#123; formData &#125;;</span><br><span class="line">        &#125;)</span><br><span class="line">        .map((&#123; formData &#125;) =&gt;</span><br><span class="line">          this.request(&#123;</span><br><span class="line">            url: &quot;http://localhost:3000&quot;,</span><br><span class="line">            data: formData</span><br><span class="line">          &#125;)</span><br><span class="line">        );</span><br><span class="line">      await Promise.all(requestList);</span><br><span class="line"><span class="addition">+     // 合并切片</span></span><br><span class="line"><span class="addition">+     await this.mergeRequest();</span></span><br><span class="line">    &#125;,</span><br><span class="line"><span class="addition">+    async mergeRequest() &#123;</span></span><br><span class="line"><span class="addition">+      await this.request(&#123;</span></span><br><span class="line"><span class="addition">+        url: &quot;http://localhost:3000/merge&quot;,</span></span><br><span class="line"><span class="addition">+        headers: &#123;</span></span><br><span class="line"><span class="addition">+          &quot;content-type&quot;: &quot;application/json&quot;</span></span><br><span class="line"><span class="addition">+        &#125;,</span></span><br><span class="line"><span class="addition">+        data: JSON.stringify(&#123;</span></span><br><span class="line"><span class="addition">+          filename: this.container.file.name</span></span><br><span class="line"><span class="addition">+        &#125;)</span></span><br><span class="line"><span class="addition">+      &#125;);</span></span><br><span class="line"><span class="addition">+    &#125;,    </span></span><br><span class="line">    async handleUpload() &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="服务端部分"><a href="#服务端部分" class="headerlink" title="服务端部分"></a>服务端部分</h2><p>使用 http 模块搭建一个简单服务端</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>();</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">  res.<span class="title function_">setHeader</span>(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">  res.<span class="title function_">setHeader</span>(<span class="string">&quot;Access-Control-Allow-Headers&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (req.<span class="property">method</span> === <span class="string">&quot;OPTIONS&quot;</span>) &#123;</span><br><span class="line">    res.<span class="property">status</span> = <span class="number">200</span>;</span><br><span class="line">    res.<span class="title function_">end</span>();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">listen</span>(<span class="number">3000</span>, <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;listening port 3000&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="接受切片"><a href="#接受切片" class="headerlink" title="接受切片"></a>接受切片</h3><p>使用 multiparty 处理前端传来的 formData</p>
+<p>在 multiparty.parse 的回调中，files 参数保存了 formData 中文件，fields 参数保存了 formData 中非文件的字段</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">const http = require(&quot;http&quot;);</span><br><span class="line">const path = require(&quot;path&quot;);</span><br><span class="line"><span class="addition">+ const fse = require(&quot;fs-extra&quot;);</span></span><br><span class="line"><span class="addition">+ const multiparty = require(&quot;multiparty&quot;);</span></span><br><span class="line"></span><br><span class="line">const server = http.createServer();</span><br><span class="line"><span class="addition">+ // 大文件存储目录</span></span><br><span class="line"><span class="addition">+ const UPLOAD_DIR = path.resolve(__dirname, &quot;..&quot;, &quot;target&quot;);</span></span><br><span class="line"></span><br><span class="line">server.on(&quot;request&quot;, async (req, res) =&gt; &#123;</span><br><span class="line">  res.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span><br><span class="line">  res.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;*&quot;);</span><br><span class="line">  if (req.method <span class="comment">=== &quot;OPTIONS&quot;) &#123;</span></span><br><span class="line">    res.status = 200;</span><br><span class="line">    res.end();</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="addition">+  const multipart = new multiparty.Form();</span></span><br><span class="line"></span><br><span class="line"><span class="addition">+  multipart.parse(req, async (err, fields, files) =&gt; &#123;</span></span><br><span class="line"><span class="addition">+    if (err) &#123;</span></span><br><span class="line"><span class="addition">+      return;</span></span><br><span class="line"><span class="addition">+    &#125;</span></span><br><span class="line"><span class="addition">+    const [chunk] = files.chunk;</span></span><br><span class="line"><span class="addition">+    const [hash] = fields.hash;</span></span><br><span class="line"><span class="addition">+    const [filename] = fields.filename;</span></span><br><span class="line"><span class="addition">+    // 创建临时文件夹用于临时存储 chunk</span></span><br><span class="line"><span class="addition">+    // 添加 chunkDir 前缀与文件名做区分</span></span><br><span class="line"><span class="addition">+    const chunkDir = path.resolve(UPLOAD_DIR, &#x27;chunkDir&#x27; + filename);</span></span><br><span class="line"></span><br><span class="line"><span class="addition">+    if (!fse.existsSync(chunkDir)) &#123;</span></span><br><span class="line"><span class="addition">+      await fse.mkdirs(chunkDir);</span></span><br><span class="line"><span class="addition">+    &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="addition">+    // fs-extra 的 rename 方法 windows 平台会有权限问题</span></span><br><span class="line"><span class="addition">+    // @see https://github.com/meteor/meteor/issues/7852#issuecomment-255767835</span></span><br><span class="line"><span class="addition">+    await fse.move(chunk.path, `$&#123;chunkDir&#125;/$&#123;hash&#125;`);</span></span><br><span class="line"><span class="addition">+    res.end(&quot;received file chunk&quot;);</span></span><br><span class="line"><span class="addition">+  &#125;);</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.listen(3000, () =&gt; console.log(&quot;listening port 3000&quot;));</span><br></pre></td></tr></table></figure>
+
+<p>查看 multiparty 处理后的 chunk 对象，path 是存储临时文件的路径，size 是临时文件大小，在 multiparty 文档中提到可以使用 fs.rename（这里换成了 fs.remove, 因为 fs-extra 的 rename 方法在 windows 平台存在权限问题）</p>
+<p>在接受文件切片时，需要先创建临时存储切片的文件夹，以 chunkDir 作为前缀，文件名作为后缀。</p>
+<p>由于前端在发送每个切片时额外携带了唯一值 hash，所以以 hash 作为文件名，将切片从临时路径移动切片文件夹中。</p>
+<h3 id="合并切片"><a href="#合并切片" class="headerlink" title="合并切片"></a>合并切片</h3><p>在接收到前端发送的合并请求后，服务端将文件夹下的所有切片进行合并</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">const http = require(&quot;http&quot;);</span><br><span class="line">const path = require(&quot;path&quot;);</span><br><span class="line">const fse = require(&quot;fs-extra&quot;);</span><br><span class="line"></span><br><span class="line">const server = http.createServer();</span><br><span class="line">const UPLOAD_DIR = path.resolve(__dirname, &quot;..&quot;, &quot;target&quot;);</span><br><span class="line"></span><br><span class="line"><span class="addition">+ const resolvePost = req =&gt;</span></span><br><span class="line"><span class="addition">+   new Promise(resolve =&gt; &#123;</span></span><br><span class="line"><span class="addition">+     let chunk = &quot;&quot;;</span></span><br><span class="line"><span class="addition">+     req.on(&quot;data&quot;, data =&gt; &#123;</span></span><br><span class="line"><span class="addition">+       chunk += data;</span></span><br><span class="line"><span class="addition">+     &#125;);</span></span><br><span class="line"><span class="addition">+     req.on(&quot;end&quot;, () =&gt; &#123;</span></span><br><span class="line"><span class="addition">+       resolve(JSON.parse(chunk));</span></span><br><span class="line"><span class="addition">+     &#125;);</span></span><br><span class="line"><span class="addition">+   &#125;);</span></span><br><span class="line"></span><br><span class="line"><span class="addition">+ // 写入文件流</span></span><br><span class="line"><span class="addition">+ const pipeStream = (path, writeStream) =&gt;</span></span><br><span class="line"><span class="addition">+  new Promise(resolve =&gt; &#123;</span></span><br><span class="line"><span class="addition">+    const readStream = fse.createReadStream(path);</span></span><br><span class="line"><span class="addition">+    readStream.on(&quot;end&quot;, () =&gt; &#123;</span></span><br><span class="line"><span class="addition">+      fse.unlinkSync(path);</span></span><br><span class="line"><span class="addition">+      resolve();</span></span><br><span class="line"><span class="addition">+    &#125;);</span></span><br><span class="line"><span class="addition">+    readStream.pipe(writeStream);</span></span><br><span class="line"><span class="addition">+  &#125;);</span></span><br><span class="line"></span><br><span class="line">// 合并切片</span><br><span class="line"><span class="addition">+ const mergeFileChunk = async (filePath, filename, size) =&gt; &#123;</span></span><br><span class="line"><span class="addition">+   const chunkDir = path.resolve(UPLOAD_DIR, &#x27;chunkDir&#x27; + filename);</span></span><br><span class="line"><span class="addition">+   const chunkPaths = await fse.readdir(chunkDir);</span></span><br><span class="line"><span class="addition">+   // 根据切片下标进行排序</span></span><br><span class="line"><span class="addition">+   // 否则直接读取目录的获得的顺序会错乱</span></span><br><span class="line"><span class="addition">+   chunkPaths.sort((a, b) =&gt; a.split(&quot;-&quot;)[1] - b.split(&quot;-&quot;)[1]);</span></span><br><span class="line"><span class="addition">+   // 并发写入文件</span></span><br><span class="line"><span class="addition">+   await Promise.all(</span></span><br><span class="line"><span class="addition">+     chunkPaths.map((chunkPath, index) =&gt;</span></span><br><span class="line"><span class="addition">+       pipeStream(</span></span><br><span class="line"><span class="addition">+         path.resolve(chunkDir, chunkPath),</span></span><br><span class="line"><span class="addition">+         // 根据 size 在指定位置创建可写流</span></span><br><span class="line"><span class="addition">+         fse.createWriteStream(filePath, &#123;</span></span><br><span class="line"><span class="addition">+           start: index * size,</span></span><br><span class="line"><span class="addition">+         &#125;)</span></span><br><span class="line"><span class="addition">+       )</span></span><br><span class="line"><span class="addition">+     )</span></span><br><span class="line"><span class="addition">+  );</span></span><br><span class="line"><span class="addition">+  // 合并后删除保存切片的目录</span></span><br><span class="line"><span class="addition">+  fse.rmdirSync(chunkDir);</span></span><br><span class="line"><span class="addition">+&#125;;</span></span><br><span class="line"></span><br><span class="line">server.on(&quot;request&quot;, async (req, res) =&gt; &#123;</span><br><span class="line">  res.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span><br><span class="line">  res.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;*&quot;);</span><br><span class="line">  if (req.method <span class="comment">=== &quot;OPTIONS&quot;) &#123;</span></span><br><span class="line">    res.status = 200;</span><br><span class="line">    res.end();</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="addition">+   if (req.url === &quot;/merge&quot;) &#123;</span></span><br><span class="line"><span class="addition">+     const data = await resolvePost(req);</span></span><br><span class="line"><span class="addition">+     const &#123; filename,size &#125; = data;</span></span><br><span class="line"><span class="addition">+     const filePath = path.resolve(UPLOAD_DIR, `$&#123;filename&#125;`);</span></span><br><span class="line"><span class="addition">+     await mergeFileChunk(filePath, filename);</span></span><br><span class="line"><span class="addition">+     res.end(</span></span><br><span class="line"><span class="addition">+       JSON.stringify(&#123;</span></span><br><span class="line"><span class="addition">+         code: 0,</span></span><br><span class="line"><span class="addition">+         message: &quot;file merged success&quot;</span></span><br><span class="line"><span class="addition">+       &#125;)</span></span><br><span class="line"><span class="addition">+     );</span></span><br><span class="line"><span class="addition">+   &#125;</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.listen(3000, () =&gt; console.log(&quot;listening port 3000&quot;));</span><br></pre></td></tr></table></figure>
+
+<p>由于前端在发送合并请求时会携带文件名，服务端根据文件名可以找到上一步创建的切片文件夹</p>
+<p>接着使用 fs.createWriteStream 创建一个可写流，可写流文件名就是上传时的文件名</p>
+<p>随后遍历整个切片文件夹，将切片通过 fs.createReadStream 创建可读流，传输合并到目标文件中</p>
+<p>值得注意的是每次可读流都会传输到可写流的指定位置，这是通过 createWriteStream 的第二个参数 start 控制的，目的是能够并发合并多个可读流至可写流中，这样即使并发时流的顺序不同，也能传输到正确的位置</p>
+<p>所以还需要让前端在请求的时候提供之前设定好的 size 给服务端，服务端根据 size 指定可读流的起始位置</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  async mergeRequest() &#123;</span><br><span class="line">     await this.request(&#123;</span><br><span class="line">       url: &quot;http://localhost:3000/merge&quot;,</span><br><span class="line">       headers: &#123;</span><br><span class="line">         &quot;content-type&quot;: &quot;application/json&quot;</span><br><span class="line">       &#125;,</span><br><span class="line">       data: JSON.stringify(&#123;</span><br><span class="line"><span class="addition">+        size: SIZE,</span></span><br><span class="line">         filename: this.container.file.name</span><br><span class="line">       &#125;)</span><br><span class="line">     &#125;);</span><br><span class="line">   &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>其实也可以等上一个切片合并完后再合并下个切片，这样就不需要指定位置，但传输速度会降低，所以使用了并发合并的手段。接着只要保证每次合并完成后删除这个切片，等所有切片都合并完毕后最后删除切片文件夹即可</p>
+<p>至此一个简单的大文件上传就完成了，接下来我们再此基础上扩展一些额外的功能。</p>
+<h2 id="显示上传进度条"><a href="#显示上传进度条" class="headerlink" title="显示上传进度条"></a>显示上传进度条</h2><p>上传进度分两种，一个是每个切片的上传进度，另一个是整个文件的上传进度，而整个文件的上传进度是基于每个切片上传进度计算而来，所以我们先实现单个切片的进度条。</p>
+<h3 id="单个切片进度条"><a href="#单个切片进度条" class="headerlink" title="单个切片进度条"></a>单个切片进度条</h3><p>XMLHttpRequest 原生支持上传进度的监听，只需要监听 upload.onprogress 即可，我们在原来的 request 基础上传入 onProgress 参数，给 XMLHttpRequest 注册监听事件</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> // xhr</span><br><span class="line">    request(&#123;</span><br><span class="line">      url,</span><br><span class="line">      method = &quot;post&quot;,</span><br><span class="line">      data,</span><br><span class="line">      headers = &#123;&#125;,</span><br><span class="line"><span class="addition">+     onProgress = e =&gt; e,</span></span><br><span class="line">      requestList</span><br><span class="line">    &#125;) &#123;</span><br><span class="line">      return new Promise(resolve =&gt; &#123;</span><br><span class="line">        const xhr = new XMLHttpRequest();</span><br><span class="line"><span class="addition">+       xhr.upload.onprogress = onProgress;</span></span><br><span class="line">        xhr.open(method, url);</span><br><span class="line">        Object.keys(headers).forEach(key =&gt;</span><br><span class="line">          xhr.setRequestHeader(key, headers[key])</span><br><span class="line">        );</span><br><span class="line">        xhr.send(data);</span><br><span class="line">        xhr.onload = e =&gt; &#123;</span><br><span class="line">          resolve(&#123;</span><br><span class="line">            data: e.target.response</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于每个切片都需要触发独立的监听事件，所以需要一个工厂函数，根据传入的切片返回不同的监听函数</p>
+<p>在原先的前端上传逻辑中新增监听函数部分</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">    // 上传切片，同时过滤已上传的切片</span><br><span class="line">    async uploadChunks(uploadedList = []) &#123;</span><br><span class="line">      const requestList = this.data</span><br><span class="line"><span class="addition">+       .map((&#123; chunk,hash,index &#125;) =&gt; &#123;</span></span><br><span class="line">          const formData = new FormData();</span><br><span class="line">          formData.append(&quot;chunk&quot;, chunk);</span><br><span class="line">          formData.append(&quot;hash&quot;, hash);</span><br><span class="line">          formData.append(&quot;filename&quot;, this.container.file.name);</span><br><span class="line"><span class="addition">+         return &#123; formData,index &#125;;</span></span><br><span class="line">        &#125;)</span><br><span class="line"><span class="addition">+       .map((&#123; formData,index &#125;) =&gt;</span></span><br><span class="line">          this.request(&#123;</span><br><span class="line">            url: &quot;http://localhost:3000&quot;,</span><br><span class="line">            data: formData，</span><br><span class="line"><span class="addition">+           onProgress: this.createProgressHandler(this.data[index]),</span></span><br><span class="line">          &#125;)</span><br><span class="line">        );</span><br><span class="line">      await Promise.all(requestList);</span><br><span class="line">      await this.mergeRequest();</span><br><span class="line">    &#125;,</span><br><span class="line">    async handleUpload() &#123;</span><br><span class="line">      if (!this.container.file) return;</span><br><span class="line">      const fileChunkList = this.createFileChunk(this.container.file);</span><br><span class="line">      this.data = fileChunkList.map((&#123; file &#125;，index) =&gt; (&#123;</span><br><span class="line">        chunk: file,</span><br><span class="line"><span class="addition">+       index,</span></span><br><span class="line">        hash: this.container.file.name + &quot;-&quot; + index</span><br><span class="line"><span class="addition">+       percentage:0</span></span><br><span class="line">      &#125;));</span><br><span class="line">      await this.uploadChunks();</span><br><span class="line">    &#125;    </span><br><span class="line"><span class="addition">+   createProgressHandler(item) &#123;</span></span><br><span class="line"><span class="addition">+      return e =&gt; &#123;</span></span><br><span class="line"><span class="addition">+        item.percentage = parseInt(String((e.loaded / e.total) * 100));</span></span><br><span class="line"><span class="addition">+      &#125;;</span></span><br><span class="line"><span class="addition">+   &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>每个切片在上传时都会通过监听函数更新 data 数组对应元素的 percentage 属性，之后把将 data 数组放到视图中展示即可。</p>
+<h3 id="总进度条"><a href="#总进度条" class="headerlink" title="总进度条"></a>总进度条</h3><p>将每个切片已上传的部分累加，除以整个文件的大小，就能得出当前文件的上传进度，所以这里使用 Vue 的计算属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="attr">computed</span>: &#123;</span><br><span class="line">      <span class="title function_">uploadPercentage</span>(<span class="params"></span>) &#123;</span><br><span class="line">         <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">container</span>.<span class="property">file</span> || !<span class="variable language_">this</span>.<span class="property">data</span>.<span class="property">length</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">const</span> loaded = <span class="variable language_">this</span>.<span class="property">data</span></span><br><span class="line">           .<span class="title function_">map</span>(<span class="function"><span class="params">item</span> =&gt;</span> item.<span class="property">size</span> * item.<span class="property">percentage</span>)</span><br><span class="line">           .<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> acc + cur);</span><br><span class="line">         <span class="keyword">return</span> <span class="built_in">parseInt</span>((loaded / <span class="variable language_">this</span>.<span class="property">container</span>.<span class="property">file</span>.<span class="property">size</span>).<span class="title function_">toFixed</span>(<span class="number">2</span>));</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>大文件上传：</p>
+<ul>
+<li>前端上传大文件时使用 Blob.prototype.slice 将文件切片，并发上传多个切片，最后发送一个合并的请求通知服务端合并切片</li>
+<li>服务端接收切片并存储，收到合并请求后使用流将切片合并到最终文件</li>
+<li>原生 XMLHttpRequest 的 upload.onprogress 对切片上传进度的监听</li>
+<li>使用 Vue 计算属性根据每个切片的进度算出整个文件的上传进度</li>
+</ul>
+<p>参考 <a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904046436843527#heading-24">https://juejin.cn/post/6844904046436843527#heading-24</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/12/project-husky/" rel="prev" title="使用 eslint + prettier + husky 打造规范化项目">
+      <i class="fa fa-chevron-left"></i> 使用 eslint + prettier + husky 打造规范化项目
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/20/breakpoint-upload/" rel="next" title="断点续传实现">
+      断点续传实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">整体思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF"><span class="nav-number">1.1.</span> <span class="nav-text">前端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.2.</span> <span class="nav-text">服务端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E9%83%A8%E5%88%86"><span class="nav-number">2.</span> <span class="nav-text">前端部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E6%8E%A7%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">上传控件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%80%BB%E8%BE%91"><span class="nav-number">2.2.</span> <span class="nav-text">请求逻辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%88%87%E7%89%87"><span class="nav-number">2.3.</span> <span class="nav-text">上传切片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%90%88%E5%B9%B6%E8%AF%B7%E6%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">发送合并请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%83%A8%E5%88%86"><span class="nav-number">3.</span> <span class="nav-text">服务端部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E5%88%87%E7%89%87"><span class="nav-number">3.1.</span> <span class="nav-text">接受切片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%88%87%E7%89%87"><span class="nav-number">3.2.</span> <span class="nav-text">合并切片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E4%B8%8A%E4%BC%A0%E8%BF%9B%E5%BA%A6%E6%9D%A1"><span class="nav-number">4.</span> <span class="nav-text">显示上传进度条</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%B8%AA%E5%88%87%E7%89%87%E8%BF%9B%E5%BA%A6%E6%9D%A1"><span class="nav-number">4.1.</span> <span class="nav-text">单个切片进度条</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E8%BF%9B%E5%BA%A6%E6%9D%A1"><span class="nav-number">4.2.</span> <span class="nav-text">总进度条</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

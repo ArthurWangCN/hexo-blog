@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="call 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="call和apply模拟实现">
+<meta property="og:url" content="https://awstudio.cn/2022/05/02/handwrite-call-apply/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="call 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-02T11:12:48.000Z">
+<meta property="article:modified_time" content="2022-05-02T11:41:59.635Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="手写">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2022/05/02/handwrite-call-apply/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>call和apply模拟实现 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2022/05/02/handwrite-call-apply/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          call和apply模拟实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-02 19:12:48 / 修改时间：19:41:59" itemprop="dateCreated datePublished" datetime="2022-05-02T19:12:48+08:00">2022-05-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">call 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="call"><a href="#call" class="headerlink" title="call"></a>call</h2><p>一句话介绍 call：</p>
+<blockquote>
+<p>call() 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。<br>举个例子：</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call</span>(foo); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<p>注意两点：</p>
+<ol>
+<li>call 改变了 this 的指向，指向到 foo</li>
+<li>bar 函数执行了</li>
+</ol>
+<p><strong>模拟实现第一步：</strong></p>
+<p>那么我们该怎么模拟实现这两个效果呢？</p>
+<p>试想当调用 call 的时候，把 foo 对象改造成如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">bar</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">foo.<span class="title function_">bar</span>(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<p>个时候 this 就指向了 foo，是不是很简单呢？</p>
+<p>但是这样却给 foo 对象本身添加了一个属性，这可不行呐！</p>
+<p>不过也不用担心，我们用 delete 再删除它不就好了~</p>
+<p>所以我们模拟的步骤可以分为：</p>
+<ol>
+<li>将函数设为对象的属性</li>
+<li>执行该函数</li>
+<li>删除该函数</li>
+</ol>
+<p>以上个例子为例，就是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一步</span></span><br><span class="line">foo.<span class="property">fn</span> = bar</span><br><span class="line"><span class="comment">// 第二步</span></span><br><span class="line">foo.<span class="title function_">fn</span>()</span><br><span class="line"><span class="comment">// 第三步</span></span><br><span class="line"><span class="keyword">delete</span> foo.<span class="property">fn</span></span><br></pre></td></tr></table></figure>
+
+<p>fn 是对象的属性名，反正最后也要删除它，所以起成什么都无所谓。</p>
+<p>根据这个思路，我们可以尝试着去写第一版的 <strong>call2</strong> 函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一版</span></span><br><span class="line"><span class="title class_">Function</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">call2</span> = <span class="keyword">function</span>(<span class="params">context</span>) &#123;</span><br><span class="line">    <span class="comment">// 首先要获取调用call的函数，用this可以获取</span></span><br><span class="line">    context.<span class="property">fn</span> = <span class="variable language_">this</span>;</span><br><span class="line">    context.<span class="title function_">fn</span>();</span><br><span class="line">    <span class="keyword">delete</span> context.<span class="property">fn</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 测试一下</span></span><br><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call2</span>(foo); <span class="comment">// 1 成功</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>模拟实现第二步：</strong></p>
+<p>最一开始也讲了，call 函数还能给定参数执行函数。举个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(name)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(age)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call</span>(foo, <span class="string">&#x27;kevin&#x27;</span>, <span class="number">18</span>);</span><br><span class="line"><span class="comment">// kevin</span></span><br><span class="line"><span class="comment">// 18</span></span><br><span class="line"><span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：传入的参数并不确定，这可咋办？</p>
+<p>不急，我们可以从 Arguments 对象中取值，取出第二个到最后一个参数，然后放到一个数组里。</p>
+<p>比如这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以上个例子为例，此时的arguments为：</span></span><br><span class="line"><span class="comment">// arguments = &#123;</span></span><br><span class="line"><span class="comment">//      0: foo,</span></span><br><span class="line"><span class="comment">//      1: &#x27;kevin&#x27;,</span></span><br><span class="line"><span class="comment">//      2: 18,</span></span><br><span class="line"><span class="comment">//      length: 3</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="comment">// 因为arguments是类数组对象，所以可以用for循环</span></span><br><span class="line"><span class="keyword">var</span> args = [];</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>, len = <span class="variable language_">arguments</span>.<span class="property">length</span>; i &lt; len; i++) &#123;</span><br><span class="line">    args.<span class="title function_">push</span>(<span class="string">&#x27;arguments[&#x27;</span> + i + <span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 执行后 args为 [&quot;arguments[1]&quot;, &quot;arguments[2]&quot;, &quot;arguments[3]&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<p>不定长的参数问题解决了，我们接着要把这个参数数组放到要执行的函数的参数里面去。也许有人想到用 ES6 的方法，不过 call 是 ES3 的方法，我们为了模拟实现一个 ES3 的方法，要用到ES6的方法，好像……，嗯，也可以啦。但是我们这次用 eval 方法拼成一个函数，类似于这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="string">&#x27;context.fn(&#x27;</span> + args +<span class="string">&#x27;)&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里 args 会自动调用 Array.toString() 这个方法。</p>
+<p>所以我们的第二版克服了两个大问题，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第二版</span></span><br><span class="line"><span class="title class_">Function</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">call2</span> = <span class="keyword">function</span>(<span class="params">context</span>) &#123;</span><br><span class="line">    context.<span class="property">fn</span> = <span class="variable language_">this</span>;</span><br><span class="line">    <span class="keyword">var</span> args = [];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>, len = <span class="variable language_">arguments</span>.<span class="property">length</span>; i &lt; len; i++) &#123;</span><br><span class="line">        args.<span class="title function_">push</span>(<span class="string">&#x27;arguments[&#x27;</span> + i + <span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">eval</span>(<span class="string">&#x27;context.fn(&#x27;</span> + args +<span class="string">&#x27;)&#x27;</span>);</span><br><span class="line">    <span class="keyword">delete</span> context.<span class="property">fn</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 测试一下</span></span><br><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(name)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(age)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call2</span>(foo, <span class="string">&#x27;kevin&#x27;</span>, <span class="number">18</span>); </span><br><span class="line"><span class="comment">// kevin</span></span><br><span class="line"><span class="comment">// 18</span></span><br><span class="line"><span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>模拟实现第三步：</strong></p>
+<p>还有两个小点要注意：</p>
+<ol>
+<li><p>this 参数可以传 null，当为 null 的时候，视为指向 window</p>
+<p>举个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> value = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call</span>(<span class="literal">null</span>); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数是可以有返回值的！</p>
+<p>举个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">value</span>: <span class="variable language_">this</span>.<span class="property">value</span>,</span><br><span class="line">        <span class="attr">name</span>: name,</span><br><span class="line">        <span class="attr">age</span>: age</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bar.<span class="title function_">call</span>(obj, <span class="string">&#x27;kevin&#x27;</span>, <span class="number">18</span>));</span><br><span class="line"><span class="comment">// Object &#123;</span></span><br><span class="line"><span class="comment">//    value: 1,</span></span><br><span class="line"><span class="comment">//    name: &#x27;kevin&#x27;,</span></span><br><span class="line"><span class="comment">//    age: 18</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>不过都好解决，最终版：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第三版</span></span><br><span class="line"><span class="title class_">Function</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">call2</span> = <span class="keyword">function</span> (<span class="params">context</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> context = context || <span class="variable language_">window</span>;</span><br><span class="line">    context.<span class="property">fn</span> = <span class="variable language_">this</span>;</span><br><span class="line">    <span class="keyword">var</span> args = [];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>, len = <span class="variable language_">arguments</span>.<span class="property">length</span>; i &lt; len; i++) &#123;</span><br><span class="line">        args.<span class="title function_">push</span>(<span class="string">&#x27;arguments[&#x27;</span> + i + <span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="built_in">eval</span>(<span class="string">&#x27;context.fn(&#x27;</span> + args +<span class="string">&#x27;)&#x27;</span>);</span><br><span class="line">    <span class="keyword">delete</span> context.<span class="property">fn</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 测试一下</span></span><br><span class="line"><span class="keyword">var</span> value = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bar</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">value</span>);</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">value</span>: <span class="variable language_">this</span>.<span class="property">value</span>,</span><br><span class="line">        <span class="attr">name</span>: name,</span><br><span class="line">        <span class="attr">age</span>: age</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">bar.<span class="title function_">call2</span>(<span class="literal">null</span>); <span class="comment">// 2</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bar.<span class="title function_">call2</span>(obj, <span class="string">&#x27;kevin&#x27;</span>, <span class="number">18</span>));</span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// Object &#123;</span></span><br><span class="line"><span class="comment">//    value: 1,</span></span><br><span class="line"><span class="comment">//    name: &#x27;kevin&#x27;,</span></span><br><span class="line"><span class="comment">//    age: 18</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>到此，我们完成了 call 的模拟实现。</p>
+<h2 id="apply的模拟实现"><a href="#apply的模拟实现" class="headerlink" title="apply的模拟实现"></a>apply的模拟实现</h2><p>apply 的实现跟 call 类似：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Function</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">apply</span> = <span class="keyword">function</span> (<span class="params">context, arr</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> context = <span class="title class_">Object</span>(context) || <span class="variable language_">window</span>;</span><br><span class="line">    context.<span class="property">fn</span> = <span class="variable language_">this</span>;</span><br><span class="line">    <span class="keyword">var</span> result;</span><br><span class="line">    <span class="keyword">if</span> (!arr) &#123;</span><br><span class="line">        result = context.<span class="title function_">fn</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> args = [];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = arr.<span class="property">length</span>; i &lt; len; i++) &#123;</span><br><span class="line">            args.<span class="title function_">push</span>(<span class="string">&#x27;arr[&#x27;</span> + i + <span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        result = <span class="built_in">eval</span>(<span class="string">&#x27;context.fn(&#x27;</span> + args + <span class="string">&#x27;)&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">delete</span> context.<span class="property">fn</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%89%8B%E5%86%99/" rel="tag"># 手写</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/20/cookie18/" rel="prev" title="cookie 18问">
+      <i class="fa fa-chevron-left"></i> cookie 18问
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/04/canvas-svg/" rel="next" title="Canvas 与 SVG">
+      Canvas 与 SVG <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#call"><span class="nav-number">1.</span> <span class="nav-text">call</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#apply%E7%9A%84%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">apply的模拟实现</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

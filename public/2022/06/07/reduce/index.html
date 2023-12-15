@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="对于新手来说， reduce 没有 map、 forEach、 filter 等数组方法那么友好。但是不得不说，它们能干的事情， reduce 一个不落下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="reduce 简介">
+<meta property="og:url" content="https://awstudio.cn/2022/06/07/reduce/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="对于新手来说， reduce 没有 map、 forEach、 filter 等数组方法那么友好。但是不得不说，它们能干的事情， reduce 一个不落下。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a64ce496d4884780820b94dcefd75480~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp">
+<meta property="article:published_time" content="2022-06-07T14:15:44.000Z">
+<meta property="article:modified_time" content="2022-06-07T14:17:49.318Z">
+<meta property="article:author" content="Arthur Wang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a64ce496d4884780820b94dcefd75480~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp">
+
+<link rel="canonical" href="https://awstudio.cn/2022/06/07/reduce/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>reduce 简介 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2022/06/07/reduce/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          reduce 简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-07 22:15:44 / 修改时间：22:17:49" itemprop="dateCreated datePublished" datetime="2022-06-07T22:15:44+08:00">2022-06-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">对于新手来说， reduce 没有 map、 forEach、 filter 等数组方法那么友好。但是不得不说，它们能干的事情， reduce 一个不落下。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>对于新手来说， <code>reduce</code> 没有 <code>map</code>、 <code>forEach</code>、 <code>filter</code> 等数组方法那么友好。但是不得不说，它们能干的事情， <code>reduce</code> 一个不落下。</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p><code>reduce</code> 接收 2 个参数： 第一个参数是回调函数（必选），第二个参数是初始值 <code>initialValue</code>（可选） 。</p>
+<p>而第一个参数（回调函数），接收下面四个参数：</p>
+<ul>
+<li>Accumulator (acc) (累计器)</li>
+<li>Current Value (cur) (当前值)</li>
+<li>Current Index (idx) (当前索引)</li>
+<li>Source Array (src) (源数组)</li>
+</ul>
+<p>我们平时在业务中多数使用到的是前两个参数，并且有以下两种情况。</p>
+<p><strong>浏览器支持情况</strong></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a64ce496d4884780820b94dcefd75480~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp" alt="image.png"></p>
+<p><strong>不带初始值</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>].<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> acc + cur</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 1 + 2 + 3 + 4</span></span><br><span class="line"><span class="comment">// 10</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>带初始值</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>].<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> acc + cur</span><br><span class="line">&#125;, <span class="number">10</span>)</span><br><span class="line"><span class="comment">// 10 + 1 + 2 + 3 + 4</span></span><br><span class="line"><span class="comment">// 20</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>初始值 <code>initialValue</code> 可以是任意类型。如果没有提供 <code>initialValue</code>，<code>reduce</code> 会从索引 1 的地方开始执行 <code>callback</code> 方法，跳过第一个索引。如果提供 <code>initialValue</code>，从索引 0 开始。</strong></p>
+</blockquote>
+<p>它的执行就像一个贪吃蛇，蛇每吃一个豆子，豆子将会变成蛇身的一部分，蛇再去吃下一个豆子。</p>
+<h2 id="reduce实现数组API"><a href="#reduce实现数组API" class="headerlink" title="reduce实现数组API"></a>reduce实现数组API</h2><p><strong>1. reduce -&gt; map</strong></p>
+<p><code>map</code> 方法接收一个回调函数，函数内接收三个参数，当前项、索引、原数组，返回一个新的数组，并且数组长度不变。 知道了这些特征之后，我们用 <code>reduce</code> 重塑 <code>map</code> 。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">reduceMap</span> = <span class="keyword">function</span>(<span class="params">callback</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur, index, array</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> item = <span class="title function_">callback</span>(cur, index, array)</span><br><span class="line">    acc.<span class="title function_">push</span>(item)</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line">  &#125;, [])</span><br><span class="line">&#125;</span><br><span class="line">testArr.<span class="title function_">reduceMap</span>(<span class="function">(<span class="params">item, index</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> item + index</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// [1, 3, 5, 7]</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>Array</code> 的原型链上添加 <code>reduceMap</code> 方法，接收一个回调函数 <code>callback</code> 作为参数（就是 <code>map</code> 传入的回调函数），内部通过 <code>this</code> 拿到当前需要操作的数组，这里 <code>reduce</code> 方法的第二个参数初始值很关键，需要设置成一个 <code>[]</code> ，这样便于后面把操作完的单项塞入 <code>acc</code> 。我们需要给 <code>callback</code> 方法传入三个值，当前项、索引、原数组，也就是原生 <code>map</code> 回调函数能拿到的值。返回 <code>item</code> 塞进 <code>acc</code>，并且返回 <code>acc</code> ，作为下一个循环的 <code>acc</code>（贪吃蛇原理）。最终 <code>this.reduce</code> 返回了新的数组，并且长度不变。</p>
+<p><strong>2. reduce -&gt; forEach</strong></p>
+<p><code>forEach</code> 接收一个回调函数作为参数，函数内接收四个参数当前项、索引、原函数、当执行回调函数 <code>callback</code> 时，用作 <code>this</code> 的值，并且不返回值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">reduceForEach</span> = <span class="keyword">function</span>(<span class="params">callback</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur, index, array</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">callback</span>(cur, index, array)</span><br><span class="line">  &#125;, [])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">testArr.<span class="title function_">reduceForEach</span>(<span class="function">(<span class="params">item, index, array</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(item, index)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 1234</span></span><br><span class="line"><span class="comment">// 0123</span></span><br></pre></td></tr></table></figure>
+
+<p>只要看得懂 <code>reduce</code> -&gt; <code>map</code> ，转 <code>forEach</code> 只是改改结构的问题。</p>
+<p><strong>3. reduce -&gt; filter</strong></p>
+<p><code>filter</code> 同样接收一个回调函数，回调函数返回 <code>true</code> 则返回当前项，反之则不返回。回调函数接收的参数同 <code>forEach</code> 。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">reduceFilter</span> = <span class="keyword">function</span> (<span class="params">callback</span>) &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur, index, array</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">callback</span>(cur, index, array)) &#123;</span><br><span class="line">      acc.<span class="title function_">push</span>(cur)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line">  &#125;, [])</span><br><span class="line">&#125;</span><br><span class="line">testArr.<span class="title function_">reduceFilter</span>(<span class="function"><span class="params">item</span> =&gt;</span> item % <span class="number">2</span> == <span class="number">0</span>) <span class="comment">// 过滤出偶数项。</span></span><br><span class="line"><span class="comment">// [2, 4]</span></span><br></pre></td></tr></table></figure>
+
+<p><code>filter</code> 方法中 <code>callback</code> 返回的是 <code>Boolean</code> 类型，所以通过 <code>if</code> 判断是否要塞入累计器 <code>acc</code> ，并且返回 <code>acc</code> 给下一次对比。最终返回整个过滤后的数组。</p>
+<p><strong>4. reduce -&gt; find</strong></p>
+<p><code>find</code> 方法中 <code>callback</code> 同样也是返回 <code>Boolean</code> 类型，返回你要找的第一个符合要求的项。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">const</span> testObj = [&#123; <span class="attr">a</span>: <span class="number">1</span> &#125;, &#123; <span class="attr">a</span>: <span class="number">2</span> &#125;, &#123; <span class="attr">a</span>: <span class="number">3</span> &#125;, &#123; <span class="attr">a</span>: <span class="number">4</span> &#125;]</span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">reduceFind</span> = <span class="keyword">function</span> (<span class="params">callback</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur, index, array</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">callback</span>(cur, index, array)) &#123;</span><br><span class="line">      <span class="keyword">if</span> (acc <span class="keyword">instanceof</span> <span class="title class_">Array</span> &amp;&amp; acc.<span class="property">length</span> == <span class="number">0</span>) &#123;</span><br><span class="line">      	acc = cur</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 循环到最后若 acc 还是数组，且长度为 0，代表没有找到想要的项，则 acc = undefined</span></span><br><span class="line">    <span class="keyword">if</span> ((index == array.<span class="property">length</span> - <span class="number">1</span>) &amp;&amp; acc <span class="keyword">instanceof</span> <span class="title class_">Array</span> &amp;&amp; acc.<span class="property">length</span> == <span class="number">0</span>) &#123;</span><br><span class="line">      acc = <span class="literal">undefined</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line">  &#125;, [])</span><br><span class="line">&#125;</span><br><span class="line">testArr.<span class="title function_">reduceFind</span>(<span class="function"><span class="params">item</span> =&gt;</span> item % <span class="number">2</span> == <span class="number">0</span>) <span class="comment">// 2</span></span><br><span class="line">testObj.<span class="title function_">reduceFind</span>(<span class="function"><span class="params">item</span> =&gt;</span> item.<span class="property">a</span> % <span class="number">2</span> == <span class="number">0</span>) <span class="comment">// &#123;a: 2&#125;</span></span><br><span class="line">testObj.<span class="title function_">reduceFind</span>(<span class="function"><span class="params">item</span> =&gt;</span> item.<span class="property">a</span> % <span class="number">9</span> == <span class="number">0</span>) <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+
+<p>你不知道操作的数组是对象数组还是普通数组，所以这里只能直接覆盖 <code>acc</code> 的值，找到第一个符合判断标准的值就不再进行赋值操作。</p>
+<h2 id="reduce实战"><a href="#reduce实战" class="headerlink" title="reduce实战"></a>reduce实战</h2><p>也许在业务中对 <code>reduce</code> 使用频率并不高，那是因为你没有很好的去理解它。在很多业务场景下，你用了更麻烦、更冗余的代码完成了你的需求。接下带大家学习一些用 <code>reduce</code> 能解决的问题。</p>
+<p><strong>1. 将二维数组转为一维数组</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [[<span class="number">1</span>,<span class="number">2</span>], [<span class="number">3</span>,<span class="number">4</span>], [<span class="number">5</span>,<span class="number">6</span>]]</span><br><span class="line">testArr.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> acc.<span class="title function_">concat</span>(cur)</span><br><span class="line">&#125;, [])</span><br><span class="line"><span class="comment">// [1,2,3,4,5,6]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2. 计算数组中每个元素出现的个数</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">10</span>]</span><br><span class="line">testArr.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!(cur <span class="keyword">in</span> acc)) &#123;</span><br><span class="line">    acc[cur] = <span class="number">1</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    acc[cur] += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> acc</span><br><span class="line">&#125;, &#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// &#123;0: 1, 1: 2, 2: 2, 3: 3, 4: 1, 5: 1, 8: 1, 9: 1, 10: 1, 12: 1&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里注意，我初始化的值变成了 <code>&#123;&#125;</code> ,这个需求需要键值对的形式，利用 <code>cur in acc</code> 判断累计器 <code>acc</code> 中是否含有 <code>cur</code> 属性，如果没有默认赋值 1，如果已经存在 <code>+= 1</code> 累加一次。 在实际的开发业务中，这个方法非常常用，变种也很多。比如给你一个账单列表（项与项之间的消费类型有相同情况），让你统计账单列表中各个消费类型的支出情况，如 <code>购物</code> 、 <code>学习</code> 、 <code>转账</code> 等消费类型的支出情况。这就用到了上述方法，去通过归类。</p>
+<p><strong>3. 按属性给数组分类</strong></p>
+<p>什么叫按照属性给数组分类，其实就是给定一个依据，把符合条件的归并到一起。再拿账单举例，就是按各个消费类型归为一类。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> bills = [</span><br><span class="line">  &#123; <span class="attr">type</span>: <span class="string">&#x27;shop&#x27;</span>, <span class="attr">momey</span>: <span class="number">223</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">type</span>: <span class="string">&#x27;study&#x27;</span>, <span class="attr">momey</span>: <span class="number">341</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">type</span>: <span class="string">&#x27;shop&#x27;</span>, <span class="attr">momey</span>: <span class="number">821</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">type</span>: <span class="string">&#x27;transfer&#x27;</span>, <span class="attr">momey</span>: <span class="number">821</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">type</span>: <span class="string">&#x27;study&#x27;</span>, <span class="attr">momey</span>: <span class="number">821</span> &#125;</span><br><span class="line">];</span><br><span class="line">bills.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 如果不存在这个键，则设置它赋值 [] 空数组</span></span><br><span class="line">  <span class="keyword">if</span> (!acc[cur.<span class="property">type</span>]) &#123;</span><br><span class="line">    acc[cur.<span class="property">type</span>] = [];</span><br><span class="line">  &#125;</span><br><span class="line">  acc[cur.<span class="property">type</span>].<span class="title function_">push</span>(cur)</span><br><span class="line">  <span class="keyword">return</span> acc</span><br><span class="line">&#125;, &#123;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;shop&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;shop&quot;</span>,</span><br><span class="line">            <span class="string">&quot;momey&quot;</span>: <span class="number">223</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;shop&quot;</span>,</span><br><span class="line">            <span class="string">&quot;momey&quot;</span>: <span class="number">821</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;study&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;study&quot;</span>,</span><br><span class="line">            <span class="string">&quot;momey&quot;</span>: <span class="number">341</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;study&quot;</span>,</span><br><span class="line">            <span class="string">&quot;momey&quot;</span>: <span class="number">821</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;transfer&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;transfer&quot;</span>,</span><br><span class="line">            <span class="string">&quot;momey&quot;</span>: <span class="number">821</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>4. 数组去重</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">5</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>]</span><br><span class="line">testArr.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!(acc.<span class="title function_">includes</span>(cur))) &#123;</span><br><span class="line">    acc.<span class="title function_">push</span>(cur)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> acc</span><br><span class="line">&#125;, [])</span><br><span class="line"><span class="comment">// [1, 2, 3, 4, 5, 6, 7]</span></span><br></pre></td></tr></table></figure>
+
+<p>上述代码逻辑，就是逐一对比，通过 <code>includes</code> 方法检查累计器里是否已经有当前项。</p>
+<p><strong>5. 求最大值或最小值</strong></p>
+<p>一个对象数组内，我想拿到某一项里某个属性最大或者最小的那一项。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> testArr = [</span><br><span class="line">  &#123; <span class="attr">age</span>: <span class="number">20</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">age</span>: <span class="number">21</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">age</span>: <span class="number">22</span> &#125;</span><br><span class="line">]</span><br><span class="line">testArr.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, cur</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!acc) &#123;</span><br><span class="line">    acc = cur</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (acc.<span class="property">age</span> &lt; cur.<span class="property">age</span>) &#123;</span><br><span class="line">    acc = cur</span><br><span class="line">    <span class="keyword">return</span> acc</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> acc</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="comment">// &#123;age: 22&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>第一次没有对比直接 <code>acc</code> 赋值 <code>cur</code> ，后面进入对比判断，如果 <code>acc</code> 的 <code>age</code> 属性小于 <code>cur</code> 的 <code>age</code> 属性，重制 <code>acc</code> 。相等的话默认返回 <code>acc</code> 。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>reduce</code> 的使用场景还有非常多，当你遇到数组复杂操作的时候，就是它大显身手的时候。深入研究它，对你今后的业务开发及面试都有很大的帮助。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/25/blog-next-links/" rel="prev" title="NexT添加友情链接">
+      <i class="fa fa-chevron-left"></i> NexT添加友情链接
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/07/ts000/" rel="next" title="快速掌握 TypeScript 基础">
+      快速掌握 TypeScript 基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce%E5%AE%9E%E7%8E%B0%E6%95%B0%E7%BB%84API"><span class="nav-number">3.</span> <span class="nav-text">reduce实现数组API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce%E5%AE%9E%E6%88%98"><span class="nav-number">4.</span> <span class="nav-text">reduce实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

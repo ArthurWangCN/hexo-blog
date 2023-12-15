@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <title>语录 | 明心轩  x  blog</title>
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="stylesheet" href="css/jquery.fullPage.css">
+  <style>
+    .home {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 9999999;
+    }
+    .wrapper {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .sentence {
+      max-width: 80%;
+      font-size: 35px;
+      color: #222;
+      line-height: 1.5;
+    }
+    .from,
+    .date {
+      margin: 0;
+      font-size: 14px;
+      color: #999;
+    }
+    @media screen and (max-width: 900px){ 
+      .sentence {
+        font-size: 30px;
+      }
+    }
+    #fp-nav ul li, .fp-slidesNav ul li {
+      margin: 0 !important;
+    }
+    #fp-nav ul li a span, .fp-slidesNav ul li a span {
+      width: 4px !important;
+      height: 4px !important;
+    }
+  </style>
+  <script src="js/jquery-1.8.3.min.js"></script>
+  <script src="js/jquery.fullPage.min.js"></script>
+</head>
+
+<body>
+  <div class="home">
+    <img title="回到首页" src="./favicon.ico" alt="">
+  </div>
+
+  <div id="fullpage">
+  </div>
+
+  <script>
+    let list = [{
+      sentence: '明德任责，好学力行',
+      from: '河南理工大学校训'
+    },{
+      sentence: '无善无恶心之体，有善有恶意之动，<br />知善知恶是良知，为善去恶是格物。',
+      from: '心学四绝',
+    }, {
+      sentence: '食二三春沐秋凉，与一人携苦挽甜',
+      from: '二食三',
+    }, {
+      sentence: '急而忘惕，怒而失察',
+      from: '《古董局中局2：清明上河图》',
+    }, {
+      sentence: '三界众生病，病根在我执。',
+      from: '《西游八十一案：西域列王纪》',
+    }];
+
+    let contentStr = '';
+    list.forEach(item => {
+      contentStr += `<div class="section"><div class="wrapper"><p class="sentence">${item.sentence}<p><p class="from">${item.from}<p></div></div>`;
+    })
+    $('#fullpage').html(contentStr);
+  </script>
+
+  <script>
+    $(function () {
+      $('#fullpage').fullpage({
+        sectionsColor: ['#fff'],
+        navigation: true,
+      });
+    });
+    
+    $('.home').click(function() {
+      window.location.href = "http://awstudio.cn"
+    }) 
+  </script>
+
+</body>
+
+</html>

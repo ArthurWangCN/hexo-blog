@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Nginx(engine x)是一款是由俄罗斯的程序设计师 Igor Sysoev 所开发高性能的Web和反向代理服务器 ，也是一个 IMAP&#x2F;POP3&#x2F;SMTP 代理服务器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7安装Nginx">
+<meta property="og:url" content="https://awstudio.cn/2022/05/14/centos-nginx/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="Nginx(engine x)是一款是由俄罗斯的程序设计师 Igor Sysoev 所开发高性能的Web和反向代理服务器 ，也是一个 IMAP&#x2F;POP3&#x2F;SMTP 代理服务器。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-14T05:53:44.000Z">
+<meta property="article:modified_time" content="2022-05-14T06:02:03.331Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="服务器">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2022/05/14/centos-nginx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CentOS7安装Nginx | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2022/05/14/centos-nginx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CentOS7安装Nginx
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-14 13:53:44 / 修改时间：14:02:03" itemprop="dateCreated datePublished" datetime="2022-05-14T13:53:44+08:00">2022-05-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">服务器</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">Nginx(engine x)是一款是由俄罗斯的程序设计师 Igor Sysoev 所开发高性能的Web和反向代理服务器 ，也是一个 IMAP/POP3/SMTP 代理服务器。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="CentOS7安装Nginx"><a href="#CentOS7安装Nginx" class="headerlink" title="CentOS7安装Nginx"></a>CentOS7安装Nginx</h1><h2 id="安装所需环境"><a href="#安装所需环境" class="headerlink" title="安装所需环境"></a>安装所需环境</h2><p>Nginx 是 C语言 开发，建议在 Linux 上运行，当然，也可以安装 Windows 版本，本篇则使用 CentOS 7 作为安装环境。</p>
+<h3 id="一、gcc-安装"><a href="#一、gcc-安装" class="headerlink" title="一、gcc 安装"></a>一、gcc 安装</h3><p>安装 nginx 需要先将官网下载的源码进行编译，编译依赖 gcc 环境，如果没有 gcc 环境，则需要安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc-c++</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、PCRE-pcre-devel-安装"><a href="#二、PCRE-pcre-devel-安装" class="headerlink" title="二、PCRE pcre-devel 安装"></a>二、PCRE pcre-devel 安装</h3><p>PCRE(Perl Compatible Regular Expressions) 是一个Perl库，包括 perl 兼容的正则表达式库。nginx 的 http 模块使用 pcre 来解析正则表达式，所以需要在 linux 上安装 pcre 库，pcre-devel 是使用 pcre 开发的一个二次开发库。nginx也需要此库。命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y pcre pcre-devel</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、zlib-安装"><a href="#三、zlib-安装" class="headerlink" title="三、zlib 安装"></a>三、zlib 安装</h3><p>zlib 库提供了很多种压缩和解压缩的方式， nginx 使用 zlib 对 http 包的内容进行 gzip ，所以需要在 Centos 上安装 zlib 库。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y zlib zlib-devel</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、OpenSSL-安装"><a href="#四、OpenSSL-安装" class="headerlink" title="四、OpenSSL 安装"></a>四、OpenSSL 安装</h3><p>OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及 SSL 协议，并提供丰富的应用程序供测试或其它目的使用。<br>nginx 不仅支持 http 协议，还支持 https（即在ssl协议上传输http），所以需要在 Centos 安装 OpenSSL 库。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="官网下载"><a href="#官网下载" class="headerlink" title="官网下载"></a>官网下载</h2><ol>
+<li><p>直接下载 .tar.gz 安装包，地址：<a target="_blank" rel="noopener" href="https://nginx.org/en/download.html">https://nginx.org/en/download.html</a></p>
+</li>
+<li><p>使用 wget 命令下载（推荐）。确保系统已经安装了wget，如果没有安装，执行 <code>yum install wget</code> 安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -c https://nginx.org/download/nginx-1.18.0.tar.gz</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf nginx-1.18.0.tar.gz</span><br><span class="line">cd nginx-1.18.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>其实在 nginx-1.18.0 版本中你就不需要去配置相关东西，默认就可以了。当然，如果你要自己配置目录也是可以的。</p>
+<p>1.使用默认配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure</span><br></pre></td></tr></table></figure>
+
+<p>2.自定义配置（不推荐）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">./configure \</span><br><span class="line">--prefix=/usr/local/nginx \</span><br><span class="line">--conf-path=/usr/local/nginx/conf/nginx.conf \</span><br><span class="line">--pid-path=/usr/local/nginx/conf/nginx.pid \</span><br><span class="line">--lock-path=/var/lock/nginx.lock \</span><br><span class="line">--error-log-path=/var/log/nginx/error.log \</span><br><span class="line">--http-log-path=/var/log/nginx/access.log \</span><br><span class="line">--with-http_gzip_static_module \</span><br><span class="line">--http-client-body-temp-path=/var/temp/nginx/client \</span><br><span class="line">--http-proxy-temp-path=/var/temp/nginx/proxy \</span><br><span class="line">--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \</span><br><span class="line">--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \</span><br><span class="line">--http-scgi-temp-path=/var/temp/nginx/scgi</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：将临时文件目录指定为&#x2F;var&#x2F;temp&#x2F;nginx，需要在&#x2F;var下创建temp及nginx目录</p>
+</blockquote>
+<h2 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>查找安装路径：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whereis nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="启动、停止nginx"><a href="#启动、停止nginx" class="headerlink" title="启动、停止nginx"></a>启动、停止nginx</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/nginx/sbin/</span><br><span class="line">./nginx </span><br><span class="line">./nginx -s stop</span><br><span class="line">./nginx -s quit</span><br><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果启动时报80端口被占用:</p>
+<p>nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</p>
+<p>解决：安装net-tool 包：yum install net-tools</p>
+<p>.&#x2F;nginx -s quit:此方式停止步骤是待nginx进程处理任务完毕进行停止。</p>
+<p>.&#x2F;nginx -s stop:此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程。</p>
+<p>查询nginx进程：<code>ps aux|grep nginx</code></p>
+</blockquote>
+<h2 id="重启-nginx"><a href="#重启-nginx" class="headerlink" title="重启 nginx"></a>重启 nginx</h2><ol>
+<li><p>先停止再启动（推荐）：<br>对 nginx 进行重启相当于先停止再启动，即先执行停止命令再执行启动命令。如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./nginx -s quit</span><br><span class="line">./nginx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重新加载配置文件：<br>当 ngin x的配置文件 nginx.conf 修改后，要想让配置生效需要重启 nginx，使用 <code>-s reload</code> 不用先停止 nginx再启动 nginx 即可将配置信息在 nginx 中生效，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>启动成功后，在浏览器可以看到“Welcome to nginx!”页面。</p>
+<h2 id="开机自启动"><a href="#开机自启动" class="headerlink" title="开机自启动"></a>开机自启动</h2><p>即在rc.local增加启动代码就可以了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<p>增加一行 <code>/usr/local/nginx/sbin/nginx</code><br>设置执行权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 rc.local</span><br></pre></td></tr></table></figure>
+
+
+
+<p>到这里，nginx就安装完毕了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag"># 服务器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/10/handwrite-ajax/" rel="prev" title="手写一个Ajax">
+      <i class="fa fa-chevron-left"></i> 手写一个Ajax
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/14/vuepress101/" rel="next" title="使用 vuepress 生成静态网站">
+      使用 vuepress 生成静态网站 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS7%E5%AE%89%E8%A3%85Nginx"><span class="nav-number">1.</span> <span class="nav-text">CentOS7安装Nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%89%80%E9%9C%80%E7%8E%AF%E5%A2%83"><span class="nav-number">1.1.</span> <span class="nav-text">安装所需环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81gcc-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.1.</span> <span class="nav-text">一、gcc 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81PCRE-pcre-devel-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.2.</span> <span class="nav-text">二、PCRE pcre-devel 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81zlib-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.3.</span> <span class="nav-text">三、zlib 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81OpenSSL-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.4.</span> <span class="nav-text">四、OpenSSL 安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.2.</span> <span class="nav-text">官网下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">解压</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">1.5.</span> <span class="nav-text">编译安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E3%80%81%E5%81%9C%E6%AD%A2nginx"><span class="nav-number">1.6.</span> <span class="nav-text">启动、停止nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%90%AF-nginx"><span class="nav-number">1.7.</span> <span class="nav-text">重启 nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="nav-number">1.8.</span> <span class="nav-text">开机自启动</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

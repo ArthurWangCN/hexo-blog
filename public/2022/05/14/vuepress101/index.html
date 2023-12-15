@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"awstudio.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="vuepress 是一个 Vue 驱动的静态网站生成器，它可以让你快速搭建一个文档&#x2F;博客，后期只需要修改markdown内容和导航参数，即可一键打包生成页面。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 vuepress 生成静态网站">
+<meta property="og:url" content="https://awstudio.cn/2022/05/14/vuepress101/index.html">
+<meta property="og:site_name" content="明心轩   x   blog">
+<meta property="og:description" content="vuepress 是一个 Vue 驱动的静态网站生成器，它可以让你快速搭建一个文档&#x2F;博客，后期只需要修改markdown内容和导航参数，即可一键打包生成页面。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-14T06:04:39.000Z">
+<meta property="article:modified_time" content="2022-05-14T06:05:59.190Z">
+<meta property="article:author" content="Arthur Wang">
+<meta property="article:tag" content="博客">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://awstudio.cn/2022/05/14/vuepress101/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用 vuepress 生成静态网站 | 明心轩   x   blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明心轩   x   blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sentence">
+
+    <a href="/sentence/" rel="section"><i class="fa fa-book fa-fw"></i>sentence</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://awstudio.cn/2022/05/14/vuepress101/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+      <meta itemprop="name" content="Arthur Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明心轩   x   blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 vuepress 生成静态网站
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-14 14:04:39 / 修改时间：14:05:59" itemprop="dateCreated datePublished" datetime="2022-05-14T14:04:39+08:00">2022-05-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">vuepress 是一个 Vue 驱动的静态网站生成器，它可以让你快速搭建一个文档/博客，后期只需要修改markdown内容和导航参数，即可一键打包生成页面。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="使用-vuepress-生成静态网站"><a href="#使用-vuepress-生成静态网站" class="headerlink" title="使用 vuepress 生成静态网站"></a>使用 vuepress 生成静态网站</h1><h2 id="vuepress-是什么"><a href="#vuepress-是什么" class="headerlink" title="vuepress 是什么"></a>vuepress 是什么</h2><p>vuepress 是一个 Vue 驱动的<strong>静态网站生成器</strong>，它可以让你：</p>
+<ul>
+<li><p><strong>快速搭建</strong>一个文档&#x2F;博客，后期只需要修改markdown内容和导航参数，即可一键打包生成页面。</p>
+</li>
+<li><p>页面具有非常好的加载性能和搜索引擎优化（SEO），其他的页面则会只在用户浏览到的时候才按需加载。</p>
+</li>
+<li><p>自动生成全局搜索、记录上次修改时间等功能。</p>
+</li>
+<li><p>可嵌入vue组件或跳转至其他页面，可定制自己的样式模板便于扩展。</p>
+</li>
+<li><p>一键免费部署到 github.pages，<strong>无需服务器即可拥有自己的在线文档&#x2F;博客</strong>。</p>
+</li>
+</ul>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>1、全局安装vuepress</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g vuepress</span><br></pre></td></tr></table></figure>
+
+<p>2、初始化项目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -y</span><br></pre></td></tr></table></figure>
+
+<p>3、按 <a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/guide/directory-structure.html">官方</a> 规定创建文件和文件夹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面没有文件类型后缀的都是文件夹</span></span><br><span class="line"><span class="comment"># 部分内容并不是必须的，想自己定制的话可以参考官方文档。这里是按照我的思路写的。</span></span><br><span class="line">├── docs</span><br><span class="line">│   ├── .vuepress  //存放核心内容的文件夹</span><br><span class="line">│   │   ├── components  //存放你需要添加的vue组件</span><br><span class="line">│   │   ├── public  //存放静态文件，如图片等</span><br><span class="line">│   │   ├── styles  //存放需要定制的样式</span><br><span class="line">│   │   │   └── palette.styl  //配置页面主题颜色的文件</span><br><span class="line">│   │   └── config.js   //设定顶部导航栏、侧边导航栏等项目配置的核心文件</span><br><span class="line">│   ├── pages   //存放markdown文件，用于设置其他页面内容</span><br><span class="line">│   ├── README.md   //首页展示用的markdown文件</span><br><span class="line">├── deploy.sh     //之后用于编写上传、发布脚本的文件</span><br><span class="line">└── package.json  //之前创建的项目描述文件</span><br></pre></td></tr></table></figure>
+
+<p>4、添加启动命令</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress dev docs&quot;</span><span class="punctuation">,</span>         <span class="comment">//用于实时预览</span></span><br><span class="line">    <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress build docs&quot;</span>      <span class="comment">//用于打包项目</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="页面配置"><a href="#页面配置" class="headerlink" title="页面配置"></a>页面配置</h3><h4 id="修改页面整体设置"><a href="#修改页面整体设置" class="headerlink" title="修改页面整体设置"></a>修改页面整体设置</h4><p>首先我们先设定网页与浏览器标签栏相关的一些设置，直接在我们的 <code>config.js</code> 文件增添下面的代码。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;这里是标题名&#x27;</span>, <span class="comment">// 显示在左上角的网页名称以及首页在浏览器标签显示的title名称</span></span><br><span class="line">    <span class="attr">description</span>: <span class="string">&#x27;这里是描述&#x27;</span>, <span class="comment">// meta 中的描述文字，用于SEO</span></span><br><span class="line">    <span class="comment">// 注入到当前页面的 HTML &lt;head&gt; 中的标签</span></span><br><span class="line">    <span class="attr">head</span>: [</span><br><span class="line">        [<span class="string">&#x27;link&#x27;</span>, </span><br><span class="line">            &#123; <span class="attr">rel</span>: <span class="string">&#x27;icon&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;/icon.png&#x27;</span> &#125;</span><br><span class="line">            <span class="comment">//浏览器的标签栏的网页图标，第一个&#x27;/&#x27;会遍历public文件夹的文件</span></span><br><span class="line">        ],  </span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改完成后，在 <code>docs/.vuepress/public</code> 文件夹里面放置我们的logo图片。</p>
+<p>然后运行我们的 <code>npm run dev</code>，打开 <code>http://localhost:8080/</code> 就可以看到效果。</p>
+<h4 id="设置首页内容"><a href="#设置首页内容" class="headerlink" title="设置首页内容"></a>设置首页内容</h4><p>接下来我们来设置首页的内容，按照官网给的格式修改<code>README.md</code>文件，填写如下内容：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">home: true</span><br><span class="line">heroImage: /icon.png</span><br><span class="line">heroText: xxx</span><br><span class="line">tagline: xxx</span><br><span class="line">actionText: 马上进入 →</span><br><span class="line">actionLink: /xxx</span><br><span class="line">features:</span><br><span class="line"><span class="bullet">-</span> title: 简洁至上</span><br><span class="line">  details: 以 Markdown 为中心的项目结构，以最少的配置帮助你专注于写作。</span><br><span class="line"><span class="bullet">-</span> title: Vue驱动</span><br><span class="line">  details: 享受 Vue + webpack 的开发体验，在 Markdown 中使用 Vue 组件，同时可以使用 Vue 来开发自定义主题。</span><br><span class="line"><span class="bullet">-</span> title: 高性能</span><br><span class="line"><span class="section">  details: VuePress 为每个页面预渲染生成静态的 HTML，同时在页面被加载的时候，将作为 SPA 运行。</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：：heroImage的地址配置第一个’&#x2F;‘默认指向的是 docs&#x2F;.vuepress&#x2F;public，你需要在此文件夹放置你的首页图片。 actionLink地址配置第一个’&#x2F;‘默认指向的是 docs&#x2F;，若未路径文件不存在点击进去会跳转至404。</p>
+</blockquote>
+<h4 id="修改页面导航栏、侧边导航栏"><a href="#修改页面导航栏、侧边导航栏" class="headerlink" title="修改页面导航栏、侧边导航栏"></a>修改页面导航栏、侧边导航栏</h4><p>导航栏修改和侧边栏修改还是在我们的 <code>config.js</code> 文件进行修改，在之前添加的moudule.exports里添加如下代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">    <span class="comment">//...省略部分代码</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//下面涉及到的md文件和其他文件的路径下一步再详细解释</span></span><br><span class="line">    <span class="attr">themeConfig</span>: &#123;</span><br><span class="line">        <span class="attr">logo</span>: <span class="string">&#x27;/egg.png&#x27;</span>,  <span class="comment">//网页顶端导航栏左上角的图标</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//顶部导航栏</span></span><br><span class="line">        <span class="attr">nav</span>: [           </span><br><span class="line">            <span class="comment">//格式一：直接跳转，&#x27;/&#x27;为不添加路由，跳转至首页</span></span><br><span class="line">            &#123; <span class="attr">text</span>: <span class="string">&#x27;首页&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/&#x27;</span> &#125;,    </span><br><span class="line">            </span><br><span class="line">            <span class="comment">//格式二：添加下拉菜单，link指向的文件路径</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">text</span>: <span class="string">&#x27;分类&#x27;</span>,  <span class="comment">//默认显示        </span></span><br><span class="line">                <span class="attr">ariaLabel</span>: <span class="string">&#x27;分类&#x27;</span>,   <span class="comment">//用于识别的label</span></span><br><span class="line">                <span class="attr">items</span>: [</span><br><span class="line">                    &#123; <span class="attr">text</span>: <span class="string">&#x27;文章&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/pages/folder1/test1.md&#x27;</span> &#125;,  </span><br><span class="line">                    <span class="comment">//点击标签会跳转至link的markdown文件生成的页面</span></span><br><span class="line">                    &#123; <span class="attr">text</span>: <span class="string">&#x27;琐碎&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/pages/folder2/test4.md&#x27;</span> &#125;,</span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123; <span class="attr">text</span>: <span class="string">&#x27;功能演示&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/pages/folder1/test3.md&#x27;</span> &#125;,</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//格式三：跳转至外部网页，需http/https前缀</span></span><br><span class="line">            &#123; <span class="attr">text</span>: <span class="string">&#x27;Github&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;https://github.com/dwanda&#x27;</span> &#125;,</span><br><span class="line">        ],</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//侧边导航栏：会根据当前的文件路径是否匹配侧边栏数据，自动显示/隐藏</span></span><br><span class="line">        <span class="attr">sidebar</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;/pages/folder1/&#x27;</span>:[         </span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">title</span>: <span class="string">&#x27;测试菜单1&#x27;</span>,   <span class="comment">// 一级菜单名称</span></span><br><span class="line">                    <span class="attr">collapsable</span>: <span class="literal">false</span>, <span class="comment">// false为默认展开菜单, 默认值true是折叠,</span></span><br><span class="line">                    <span class="attr">sidebarDepth</span>: <span class="number">1</span>,    <span class="comment">//  设置侧边导航自动提取markdown文件标题的层级，默认1为h2层级</span></span><br><span class="line">                    <span class="attr">children</span>: [</span><br><span class="line">                        [<span class="string">&#x27;test1.md&#x27;</span>, <span class="string">&#x27;子菜单1&#x27;</span>],  <span class="comment">//菜单名称为&#x27;子菜单1&#x27;，跳转至/pages/folder1/test1.md</span></span><br><span class="line">                        [<span class="string">&#x27;test3.md&#x27;</span>, <span class="string">&#x27;子菜单2&#x27;</span>]</span><br><span class="line">                    ]</span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">title</span>: <span class="string">&#x27;测试菜单2&#x27;</span>,</span><br><span class="line">                    <span class="attr">collapsable</span>: <span class="literal">false</span>, </span><br><span class="line">                    <span class="attr">children</span>: [</span><br><span class="line">                        [<span class="string">&#x27;test2.md&#x27;</span>, <span class="string">&#x27;子菜单1&#x27;</span>]</span><br><span class="line">                    ]</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//...可添加多个不同的侧边栏，不同页面会根据路径显示不同的侧边栏</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="一键部署至github-page"><a href="#一键部署至github-page" class="headerlink" title="一键部署至github page"></a>一键部署至github page</h2><p>在你的项目中，创建一个如下的 <code>deploy.sh</code> 文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/usr/bin/env sh</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保脚本抛出遇到的错误</span></span><br><span class="line">set -e</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成静态文件</span></span><br><span class="line">npm run docs:build</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进入生成的文件夹</span></span><br><span class="line">cd docs/.vuepress/dist</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果是发布到自定义域名</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> <span class="string">&#x27;www.example.com&#x27;</span> &gt; CNAME</span></span><br><span class="line"></span><br><span class="line">git init</span><br><span class="line">git add -A</span><br><span class="line">git commit -m &#x27;deploy&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果发布到 https://&lt;USERNAME&gt;.github.io</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">git push -f git@github.com:&lt;USERNAME&gt;/&lt;USERNAME&gt;.github.io.git master</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果发布到 https://&lt;USERNAME&gt;.github.io/&lt;REPO&gt;</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">git push -f git@github.com:&lt;USERNAME&gt;/&lt;REPO&gt;.git master:gh-pages</span></span><br><span class="line"></span><br><span class="line">cd -</span><br></pre></td></tr></table></figure>
+
+<p><code>package.json</code> 中配置命令执行此shell文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;deploy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bash deploy.sh&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="热编译浏览器不自动更新"><a href="#热编译浏览器不自动更新" class="headerlink" title="热编译浏览器不自动更新"></a>热编译浏览器不自动更新</h3><p>本地开发模式运行Vuepress 1.x 时，浏览器不能自动更新:</p>
+<p>在 package.json 中将运行命令 由</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress dev docs&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>改为</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress dev docs --temp .temp&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>即可解决。</p>
+<blockquote>
+<p>注意：运行 vuepress 会生成一个临时文件夹 .temp，可以在 .gitignore 中忽略掉该文件夹</p>
+</blockquote>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/">VuePress</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903999129436174#heading-9">1小时搞定vuepress</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag"># 博客</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/14/centos-nginx/" rel="prev" title="CentOS7安装Nginx">
+      <i class="fa fa-chevron-left"></i> CentOS7安装Nginx
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/14/react-devtools/" rel="next" title="react-devtools 简单安装教程">
+      react-devtools 简单安装教程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-vuepress-%E7%94%9F%E6%88%90%E9%9D%99%E6%80%81%E7%BD%91%E7%AB%99"><span class="nav-number">1.</span> <span class="nav-text">使用 vuepress 生成静态网站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#vuepress-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">vuepress 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B"><span class="nav-number">1.2.</span> <span class="nav-text">开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.2.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">页面配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%A1%B5%E9%9D%A2%E6%95%B4%E4%BD%93%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">修改页面整体设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%A6%96%E9%A1%B5%E5%86%85%E5%AE%B9"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">设置首页内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%A1%B5%E9%9D%A2%E5%AF%BC%E8%88%AA%E6%A0%8F%E3%80%81%E4%BE%A7%E8%BE%B9%E5%AF%BC%E8%88%AA%E6%A0%8F"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">修改页面导航栏、侧边导航栏</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2%E8%87%B3github-page"><span class="nav-number">1.3.</span> <span class="nav-text">一键部署至github page</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">1.4.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E7%BC%96%E8%AF%91%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">热编译浏览器不自动更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Arthur Wang"
+      src="https://cdn.jsdelivr.net/gh/ArthurWangCN/PictureBed/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Arthur Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
