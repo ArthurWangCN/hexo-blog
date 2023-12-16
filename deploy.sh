@@ -6,7 +6,7 @@ cd /www/wwwroot/hexo-blog
 git reset --hard HEAD
 
 # 执行强制拉取
-git pull origin
+git pull origin master
 
 hexo clean
 
